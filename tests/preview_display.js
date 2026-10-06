@@ -1,0 +1,11 @@
+const script=(await Deno.readTextFile('ccs/index.html')).split('<script>')[1].split('</script>')[0];
+const elements=new Map();
+const document={querySelector(s){if(!elements.has(s))elements.set(s,{value:'',dataset:{},innerHTML:''});return elements.get(s)}};
+const localStorage={getItem:()=>null,setItem:()=>{}};
+const fetch=async()=>({ok:true,json:async()=>[]});
+const show=new Function('document','localStorage','fetch','setInterval',script+'\nreturn show;')(document,localStorage,fetch,()=>{});
+show({id:'test',plan:null,status:{stage:'Finished',detail:''},finished:true,processed:true,preview:true,preview_version:123});
+const html=document.querySelector('#jobs').innerHTML;
+if(!html.includes('src="/files/test/preview.mp4?v=123"'))throw Error('Player does not use the lightweight preview');
+if(!html.includes('href="/files/test/finished.mp4" download='))throw Error('Download does not use the full-quality master');
+console.log('Browser player uses the preview while the download uses the full-quality master.');

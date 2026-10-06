@@ -1,0 +1,7 @@
+yt-dlp[default]==2026.8.19
+faster-whisper==1.2.1
+Pillow==12.3.0
+numpy==2.5.3
+scipy==1.18.1
+rapidocr-onnxruntime==1.4.4
+av==16.1.0

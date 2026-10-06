@@ -1,0 +1,18 @@
+# Local state and generated output
+.venv/
+.tools/
+.models/
+jobs/
+dist/
+__pycache__/
+*.py[cod]
+*.log
+.env
+.env.*
+cookies*.txt
+# Branding requires separate permission; redundant downloaded Bible formats
+assets/church-logo.png
+assets/web-bible.zip
+assets/bible/*
+!assets/bible/engwebp_vpl.txt
+!assets/bible/engwebp_vpl_about.htm

@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+CCS_ROOT="$(cd -- "$(dirname -- "$(readlink -f -- "$0")")" && pwd)"
+cd "$CCS_ROOT"
+if ! .venv/bin/python -c 'import urllib.request; urllib.request.urlopen("http://127.0.0.1:8765/api/jobs", timeout=2)' >/dev/null 2>&1; then
+    if systemctl --user cat ccs-video-cleanup.service >/dev/null 2>&1; then
+        systemctl --user start ccs-video-cleanup.service
+    else
+        nohup ./ccs-cleanup serve > .tools/server.log 2>&1 < /dev/null &
+    fi
+    sleep 1
+fi
+xdg-open http://127.0.0.1:8765

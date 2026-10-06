@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+CCS_ROOT="$(cd -- "$(dirname -- "$(readlink -f -- "$0")")" && pwd)"
+cd "$CCS_ROOT"
+export PATH="$CCS_ROOT/.tools/bin:$PATH"
+exec "$CCS_ROOT/.venv/bin/python" -m ccs.cli "$@"
