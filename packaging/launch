@@ -1,0 +1,35 @@
+#!/bin/sh
+set -eu
+app=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+export CCS_DATA_DIR="${CCS_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/ccs-video-cleanup}"
+export CCS_BIN_DIR=/usr/bin
+export CCS_MODEL_DIR="$CCS_DATA_DIR/models/whisper"
+export CCS_LOGO="$CCS_DATA_DIR/assets/church-logo.png"
+export CCS_YTDLP="$CCS_DATA_DIR/venv/bin/yt-dlp"
+export PYTHONPATH="$app" PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
+export PATH="$CCS_DATA_DIR/venv/bin:$PATH"
+mkdir -p "$CCS_DATA_DIR/jobs"
+if [ "${1:-}" = setup ]; then
+    shift
+    exec /usr/bin/python3 "$app/setup_user.py" "$@"
+fi
+if [ "${1:-}" = --help ] || [ "${1:-}" = -h ]; then
+    exec /usr/bin/python3 -m ccs.cli "$@"
+fi
+/usr/bin/python3 "$app/setup_user.py"
+export HF_HUB_OFFLINE=1
+if [ "${1:-}" = --open ]; then
+    if systemctl --user cat ccs-video-cleanup-packaged.service >/dev/null 2>&1; then
+        systemctl --user enable --now ccs-video-cleanup-packaged.service
+    elif ! "$CCS_DATA_DIR/venv/bin/python" -c 'import urllib.request; urllib.request.urlopen("http://127.0.0.1:8765/api/jobs", timeout=2)' >/dev/null 2>&1; then
+        nohup "$app/launch" serve > "$CCS_DATA_DIR/server.log" 2>&1 < /dev/null &
+    fi
+    n=0
+    until "$CCS_DATA_DIR/venv/bin/python" -c 'import urllib.request; urllib.request.urlopen("http://127.0.0.1:8765/api/jobs", timeout=2)' >/dev/null 2>&1; do
+        n=$((n + 1))
+        [ "$n" -lt 15 ] || { echo 'The local server did not start.' >&2; exit 1; }
+        sleep 1
+    done
+    exec xdg-open http://127.0.0.1:8765
+fi
+exec "$CCS_DATA_DIR/venv/bin/python" -m ccs.cli "$@"

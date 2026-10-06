@@ -1,0 +1,35 @@
+{
+  "package": "ccs-video-cleanup_1.1.0_amd64.deb",
+  "sha256": "02467a35e38fbd618e02ed20fe6a58f07e474131e54a9182a23618845c24f0f8",
+  "package_contains_no_third_party_binaries_models_or_logo": true,
+  "tests_passed": 19,
+  "environments": {
+    "Ubuntu 24.04 Python 3.12": {
+      "system_libraries": {
+        "numpy": "/usr/lib/python3/dist-packages/numpy/__init__.py",
+        "scipy": "/usr/lib/python3/dist-packages/scipy/__init__.py",
+        "PIL": "/usr/lib/python3/dist-packages/PIL/__init__.py",
+        "cv2": "/usr/lib/python3/dist-packages/cv2.cpython-312-x86_64-linux-gnu.so",
+        "av": "/usr/lib/python3/dist-packages/av/__init__.py"
+      },
+      "offline_speech_model": true,
+      "ocr_inference": true,
+      "repeat_setup_reused": true,
+      "web_ui_and_jobs_api": true
+    },
+    "Debian 13 Python 3.13": {
+      "system_libraries": {
+        "numpy": "/usr/lib/python3/dist-packages/numpy/__init__.py",
+        "scipy": "/usr/lib/python3/dist-packages/scipy/__init__.py",
+        "PIL": "/usr/lib/python3/dist-packages/PIL/__init__.py",
+        "cv2": "/usr/lib/python3/dist-packages/cv2.cpython-313-x86_64-linux-gnu.so",
+        "av": "/usr/lib/python3/dist-packages/av/__init__.py"
+      },
+      "offline_speech_model": true,
+      "ocr_inference": true,
+      "repeat_setup_reused": true,
+      "web_ui_and_jobs_api": true
+    }
+  },
+  "method": "APT install and normal-user setup in isolated proot distribution roots; shared host kernel. Desktop login/autostart not exercised."
+}

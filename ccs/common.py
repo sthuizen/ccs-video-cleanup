@@ -1,10 +1,13 @@
 from pathlib import Path
 import json, os, subprocess, time
 ROOT = Path(__file__).resolve().parent.parent
-BIN = ROOT / '.tools/bin'
+BIN = Path(os.environ.get('CCS_BIN_DIR', str(ROOT / '.tools/bin')))
 DATA_ROOT = Path(os.environ.get('CCS_DATA_DIR', str(ROOT)))
 JOBS = DATA_ROOT / 'jobs'
 LOCK = DATA_ROOT / '.tools/pipeline.lock'
+MODELS = Path(os.environ.get('CCS_MODEL_DIR', str(ROOT / '.models/whisper')))
+LOGO = Path(os.environ.get('CCS_LOGO', str(ROOT / 'assets/church-logo.png')))
+YTDLP = Path(os.environ.get('CCS_YTDLP', str(ROOT / '.venv/bin/yt-dlp')))
 os.environ['PATH'] = str(BIN) + os.pathsep + os.environ.get('PATH', '')
 os.environ.setdefault('OMP_NUM_THREADS', '6')
 def write_json(path, value):

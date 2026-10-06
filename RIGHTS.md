@@ -1,0 +1,9 @@
+# Application rights, dependencies and private archive
+
+This repository is private and is intended for the owner's use and authorized collaborators. No new open-source licence or blanket public redistribution permission has been assigned to the application. Access to the repository is not a grant of rights over church branding, recordings or all included third-party components. Obtain an explicit licence decision from the relevant rights holders before publishing the application source.
+
+Version 1.1 reduces bundled dependencies: the installer contains application source, setup scripts and the public-domain World English Bible Protestant text. APT supplies standard system components; the user separately downloads specialist packages/models under upstream terms. See [the component and notice guide](packaging/THIRD_PARTY.md) and [Bible provenance](assets/SOURCE.md). Separating downloads does not waive upstream terms or constitute a complete transitive legal audit.
+
+The 1.0 installer is preserved privately to satisfy the historical archive requirement. Its bundled-runtime redistribution review is unfinished. In particular, exact FFmpeg/native-library corresponding-source and licence-notice obligations, model notices and permission to redistribute the church logo were not established. Do not treat the archive as a cleared public binary release. The logo is absent from current source and the 1.1 installer; an operator may import a logo they are authorized to use locally.
+
+Do not change this repository to public or redistribute the legacy bundle until source/branding permissions and applicable dependency obligations have been resolved. No service recordings, transcripts, cookies or private user environments are included in Git. Recordings may carry separate speaker/music rights; the app never publishes them automatically.

@@ -1,0 +1,21 @@
+{
+  "archive_date": "2026-10-06",
+  "artifacts": [
+    {
+      "version": "1.0.0",
+      "filename": "ccs-video-cleanup_1.0.0_amd64.deb",
+      "bytes": 854386024,
+      "sha256": "2288dd959935bc7258e384cc4bfefc2dce6ccd48f3759d4a2c4ded4e05f614da",
+      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.0.0",
+      "status": "legacy private archive; redistribution audit unfinished"
+    },
+    {
+      "version": "1.1.0",
+      "filename": "ccs-video-cleanup_1.1.0_amd64.deb",
+      "bytes": 1172244,
+      "sha256": "02467a35e38fbd618e02ed20fe6a58f07e474131e54a9182a23618845c24f0f8",
+      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.1.0",
+      "status": "recommended"
+    }
+  ]
+}

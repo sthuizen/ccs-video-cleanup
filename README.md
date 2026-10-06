@@ -1,50 +1,64 @@
 # Christ Church Video Cleanup
 
-Open **Christ Church Video Cleanup** from the applications menu, or run `./open-cleanup`. Paste a YouTube service URL and choose **Prepare sermon**.
+Prepare a full church-service recording into a sermon video: a five-second introduction followed by the selected Bible reading and sermon, with cleaned mono audio and optional camera stabilization. A local browser interface lets you review the date, passage, title and cut points before creating the finished video.
 
-The original download stays in `jobs/<video-id>/source.mp4`. Browser playback uses a separate 720p H.264 preview with the original finished audio copied intact. The download always uses the full-quality `finished.mp4`. The separate output is `finished.mp4`, with a five-second intro followed by the Bible reading and sermon. Chapter markers identify the reading, sermon, closing prayer and clearly signposted points. Nothing is uploaded or published.
+**Start with [version 1.1.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.1.0).** This private repository preserves the source and both available installers. The older 1.0.0 package is a legacy archive; use 1.1.0 for a new installation.
 
-New downloads select the highest reported video and audio bitrates available, with no resolution cap. Separate streams are merged without re-encoding the source. Existing downloaded sources remain cached. See the [yt-dlp format sorting documentation](https://github.com/yt-dlp/yt-dlp#sorting-formats) for the bitrate selection rules.
+## Install on Ubuntu or Debian
 
-The app downloads with yt-dlp, uses English captions if available, otherwise transcribes locally with faster-whisper small.en on the CPU. Local OCR looks for slides; lexical matching against a cached public-domain Bible helps identify the verse range without an AI model. Conventional FFmpeg processing handles noise reduction, speech EQ, compression, mono conversion, loudness normalization and two-pass camera stabilization. The church logo is cached from the official website.
+Validated targets are **Ubuntu 24.04 LTS and Debian 13, amd64/x86-64**. Other distributions, release versions and ARM systems require separate validation. Ubuntu needs its `universe` repository enabled.
 
-The app checks stereo phase before mixing: opposed channels would cancel the voice, so it selects one instead. This is needed for the supplied 4 October 2026 service. Normalization targets -18 LUFS and -1.5 dB true peak before AAC encoding. The supplied service measured -18.2 LUFS and -1.1 dB true peak after encoding. Stabilization uses a modest 3% zoom and limited correction so camera shake is reduced without large framing changes. Noise reduction cannot remove every cough, voice or room reflection without damaging the sermon.
+1. Sign in to GitHub with access to this repository. Open the [recommended release](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.1.0) and download the `.deb` and its `.deb.sha256` file into the same folder.
+2. Open a terminal in that folder and run:
 
-If date, passage, title or cut points are unclear, the app shows its evidence and asks for the missing information. It does not invent titles, use the upload date as the sermon date, or guess a cut when evidence is weak. Play near the suggested reading and ending, edit the relevant fields and choose **Save details and create video**. When verse matching succeeds, the start is just before the first verse; otherwise the reading announcement is used as a candidate. the end should be after the sermon/closing prayer and before the closing-song introduction.
+   ```bash
+   sha256sum -c ccs-video-cleanup_1.1.0_amd64.deb.sha256
+   sudo apt install ./ccs-video-cleanup_1.1.0_amd64.deb
+   ccs-video-cleanup setup
+   ```
 
-Downloaded files, transcripts and OCR are reused on repeat runs. There are no cloud AI calls, API keys or subscriptions. Speech recognition and OCR use cached local models. Processing time depends on service length and CPU load; downloading and the initial transcript can take several minutes. A single service is processed at a time. Each step shows an elapsed timer, measured percentage and approximate time remaining when available; completed steps retain their durations. Downloads show progress for the current file because video, audio and captions transfer separately. Setup and brief analysis show an indeterminate indicator until measurable work starts. Estimates adjust to the observed processing speed.
+3. Run setup as your normal desktop user. It downloads and checks the specialist tools and models; internet access is required. Allow several minutes and roughly 1–2 GB for those tools, plus system packages and video storage.
+4. Open **Christ Church Video Cleanup** from your applications menu. The browser opens at `http://127.0.0.1:8765`.
 
-## Command line
+The package uses APT for standard dependencies. Specialist AI packages, the YouTube downloader, Deno and the speech model are downloaded separately into your own user account. The church logo is excluded; an intro uses the church name as text unless you supply an authorized logo. See the [complete installation, migration and removal instructions](packaging/README.md).
 
-```bash
-./ccs-cleanup run 'https://www.youtube.com/watch?v=VIDEO_ID'
-./ccs-cleanup analyze '/absolute/path/service.mp4'
-./ccs-cleanup review 'URL' --start '00:38:00' --end '01:18:00' \
-  --date '2026-10-04' --passage 'Romans 2:1–16' \
-  --title 'Your sermon title' --confirm
-./ccs-cleanup render 'URL'
-```
+## Prepare a sermon
 
-The times above are examples. Use the timestamps for your own video. `render --no-stabilize` is available for sources that already look steady. Local files work through the command line.
+1. Paste the completed service's YouTube URL and choose **Prepare sermon**.
+2. Leave the computer running while it downloads and analyzes the recording. Closing the browser does not cancel processing.
+3. If the app asks for details, play around the suggested cut points and supply the missing date, passage, title or timestamps. Unusual services can require manual correction; the interface is designed for that.
+4. Choose **Save details and create video** when you are satisfied. Strong, unambiguous evidence can permit automatic rendering.
+5. Watch the intro and check the beginning and end. Download **finished.mp4**, the full-quality output. Browser playback uses a separate preview.
 
-The app defaults to Firefox download access and remembers changes to this setting in each browser. Keep YouTube signed in within Firefox; cookies are read locally on each download. Clear the field if you prefer anonymous downloads. If YouTube requests sign-in, use `firefox` in the download-access field or add `--cookies-from-browser firefox` to `run`. Cookies are read by yt-dlp locally; they are not copied into reports. Download failures and expired URLs are retained in the job logs. Live services must finish before clipping.
+There is no publishing or upload step. See the [operator guide](docs/USER_GUIDE.md) for review examples, file locations and CLI commands.
 
-## Installation and maintenance
+## What runs locally?
 
-Tools are already installed in this folder's `.tools/bin` and `.venv`; Python 3.12 is managed by uv. No sudo is required. To recreate installation on x86-64 Linux, run `python3 setup.py`. The installer downloads official uv, Deno and BtbN FFmpeg releases and installs pinned Python dependencies. Model files are cached in `.models/whisper`.
+Speech recognition uses faster-whisper `small.en` on the CPU when usable English captions are unavailable. Slide reading uses RapidOCR. Passage matching and selection rules are conventional code; audio cleanup and stabilization use FFmpeg. **There are no cloud AI API calls, API keys or subscriptions.** Installation contacts dependency/model providers; YouTube processing contacts YouTube and may use locally read browser cookies. Cached local recordings and models support offline processing.
 
-YouTube changes frequently. If downloads stop working, update yt-dlp using:
+The app preserves the source and analysis evidence. It checks stereo phase before mixing so opposed channels do not cancel the voice. It asks for uncertain metadata instead of inventing an official title or treating an upload date as the service date. These checks improve reliability, but the operator still needs to check the result.
 
-```bash
-.tools/bin/uv pip install --python .venv/bin/python --upgrade 'yt-dlp[default]'
-```
+## Documentation
 
-A user systemd service runs the loopback-only web server at `http://127.0.0.1:8765`; it keeps running so a browser close does not stop a render. Closing the app window closes only the browser. The service starts when you log in; reopening the launcher also starts it if needed. Stop it with `systemctl --user stop ccs-video-cleanup.service`, or prevent login startup with `systemctl --user disable ccs-video-cleanup.service`. Partial processing stages can be restarted with **Prepare sermon**. Only successfully completed transcript/OCR caches are reused. Outputs are fully decoded and checked for mono audio and expected duration before the job is marked finished.
+| You need to… | Read |
+|---|---|
+| Install, migrate, add a logo or uninstall | [Package instructions](packaging/README.md) |
+| Prepare a service and correct uncertain information | [Operator guide](docs/USER_GUIDE.md) |
+| Resolve setup, download, review or rendering problems | [Troubleshooting](docs/TROUBLESHOOTING.md) |
+| Back up jobs, maintain tools or recover an installation | [Maintenance and recovery](docs/MAINTENANCE.md) |
+| Understand the pipeline, caches and configuration | [Architecture](docs/ARCHITECTURE.md) |
+| Change the app, test it or build a new package | [Development guide](docs/DEVELOPMENT.md) |
+| Find earlier versions and understand archive provenance | [Version history](docs/VERSION_HISTORY.md) |
+| Review dependency licences and branding restrictions | [Third-party components](packaging/THIRD_PARTY.md) and [rights](RIGHTS.md) |
+| Maintain the original project-folder installation | [Original local installation](docs/LOCAL_INSTALL.md) |
 
-Tests: `.venv/bin/python -m unittest discover -s tests -v`. Tests include a full short render of opposed stereo audio with stabilization and an intro card.
+## Versions and verification
 
-Space: an 84-minute 720p service may use around 1–3 GB including source, PCM analysis audio, intermediate encode and final MP4. Files are retained for review and recovery. You can remove a completed job folder when you no longer need its files.
+| Version | Status | Packaging |
+|---|---|---|
+| [1.1.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.1.0) | Recommended | Small application-only `.deb`; APT libraries and user setup |
+| [1.0.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.0.0) | Legacy private archive | Large bundled runtime; redistribution audit unfinished |
 
-## Debian / Ubuntu package
+Version 1.1.0 passed all 19 Python tests, a synthetic media render, real OCR, offline speech-model loading, repeat setup and web/API checks in isolated Ubuntu 24.04 and Debian 13 userspaces. Those tests shared the host kernel; graphical desktop login/autostart was not exercised. The [validation record](docs/validation/v1.1.0.json) identifies the exact tested installer. [Artifact checksums and byte sizes](docs/versions.json) distinguish original installers from future rebuilds.
 
-A bundled amd64 `.deb` installer and rebuild instructions are described in [packaging/README.md](packaging/README.md). It includes the local models and media tools; APT supplies the declared system libraries. The packaged application keeps job data in your home directory.
+Source code and documentation are tracked in Git. Installer binaries are release attachments. Service recordings, transcripts, cookies, user environments and models are excluded from the source repository. This is a private application archive; no new open-source licence has been assigned. Read [RIGHTS.md](RIGHTS.md) before sharing or changing repository visibility.

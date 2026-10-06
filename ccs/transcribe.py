@@ -1,4 +1,4 @@
-from .common import ROOT, BIN, read_json, write_json, command, status
+from .common import ROOT, BIN, MODELS, read_json, write_json, command, status
 
 def captions(job):
     files=sorted(job.glob('source.en*.json3'))
@@ -43,7 +43,7 @@ def transcribe(job, video):
         command([BIN/'ffmpeg','-y','-i',video,'-vn','-af',mono,'-ac','1','-ar','16000',audio],job,'speech-audio')
         status(job,'Transcribing','Loading the local speech model',percent=0)
         from faster_whisper import WhisperModel
-        model=WhisperModel('small.en',device='cpu',compute_type='int8',cpu_threads=6,download_root=str(ROOT/'.models/whisper'))
+        model=WhisperModel('small.en',device='cpu',compute_type='int8',cpu_threads=6,download_root=str(MODELS))
         stream, info=model.transcribe(str(audio),language='en',beam_size=3,vad_filter=True,word_timestamps=True,
             initial_prompt='Christ Church Southampton. Bible reading, sermon, scripture, chapter, verses. Let us pray.')
         segments=[]

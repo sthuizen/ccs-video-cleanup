@@ -2,7 +2,7 @@ import json, re, subprocess
 from datetime import datetime
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
-from .common import ROOT, BIN, command, probe, status, write_json, read_json, exclusive
+from .common import ROOT, BIN, LOGO, command, probe, status, write_json, read_json, exclusive
 from .acquire import video_path
 INTRO_SECONDS=5
 CLEAN='highpass=f=75,lowpass=f=11000,afftdn=nf=-30:nr=10:tn=1,equalizer=f=300:t=q:w=1:g=-1.5,equalizer=f=3000:t=q:w=1:g=1.5,acompressor=threshold=0.125:ratio=2:attack=15:release=200:makeup=1'
@@ -19,9 +19,12 @@ def card(job, plan, width, height):
     def font(size,bold=False):
         return ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans'+('-Bold' if bold else '')+'.ttf',max(12,int(size)))
     scale=width/1280
-    logo=Image.open(ROOT/'assets/church-logo.png').convert('RGBA')
-    logo.thumbnail((int(width*.65),int(height*.2)))
-    img.paste(logo,((width-logo.width)//2,int(height*.11)),logo)
+    if LOGO.is_file():
+        logo=Image.open(LOGO).convert('RGBA')
+        logo.thumbnail((int(width*.65),int(height*.2)))
+        img.paste(logo,((width-logo.width)//2,int(height*.11)),logo)
+    else:
+        draw.text((width/2,height*.2),'Christ Church Southampton',font=font(38*scale,True),anchor='mm',fill='white')
     draw.rectangle((int(width*.1),int(height*.36),int(width*.9),int(height*.365)),fill='#f89b28')
     f=font(50*scale,True)
     words=plan['title'].split(); lines=[]; line=''

@@ -1,0 +1,12 @@
+# Installed into a private user venv; standard image/media packages come from APT.
+ctranslate2>=4.0,<5
+huggingface-hub>=0.21,<2
+tokenizers>=0.13,<1
+onnxruntime>=1.14,<2
+tqdm
+pyclipper>=1.2
+Shapely>=1.7.1,!=2.0.4
+PyYAML>=5.3,<7
+six>=1.15
+# Keep YouTube support and its challenge solver current; Deno is supplied by PyPI.
+yt-dlp[default,deno]>=2026.8.19

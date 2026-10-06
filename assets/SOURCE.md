@@ -11,3 +11,5 @@ https://ebible.org/Scriptures/engwebp_vpl.zip
 https://ebible.org/find/details.php?id=engwebp
 
 It helps identify the passage from the recorded words; it is not a substitute audio track or a claim that the speaker used this translation.
+
+The logo URL is provenance for the original local installation, not a redistribution licence. The image itself is excluded from Git and the application-only 1.1 package.
