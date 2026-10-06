@@ -1,0 +1,25 @@
+{
+  "version": "1.2.0",
+  "date": "2026-10-06",
+  "artifact": {
+    "filename": "ccs-video-cleanup_1.2.0_windows_x64_setup.exe",
+    "bytes": 12588704,
+    "sha256": "6e3d6c9e0e0dce752c8dad1e3c3534e98b8f7b54d5c041d691abaceadb84f221",
+    "authenticode_signed": false
+  },
+  "windows_builds": [
+    "19045.2006",
+    "26100.1742"
+  ],
+  "python_tests_per_platform": 23,
+  "ui_tests_per_platform": 4,
+  "real_ocr": true,
+  "offline_synthetic_speech_inference": true,
+  "full_synthetic_render": true,
+  "installer_update_uninstall_retention": true,
+  "cli_without_server_update_guard": true,
+  "fresh_unicode_data_setup": true,
+  "live_authenticated_youtube_download_verified": false,
+  "live_youtube_limitation": "HTTP 429 and sign-in verification in lab",
+  "details": "v1.2.0.md"
+}

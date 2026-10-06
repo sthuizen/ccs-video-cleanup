@@ -76,3 +76,11 @@ Before publishing a new private release:
 5. Download/check the new attachment or compare GitHub's asset SHA-256 digest with the local file. Retain earlier releases; do not replace historical installer bytes.
 
 [GitHub Releases](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases) associate binary attachments with Git tags and also provide source archives. Keep the repository private. No release process here grants public distribution rights to the application or archived bundled components.
+
+## Windows development
+
+The [Windows builder and guide](../packaging/windows/README.md) explain the Linux NSIS build. The embedded runtime and pip wheel have pinned SHA-256 values; Python dependencies use Windows x64 hash locks. Download the authorized raw logo from the private Windows release and supply it locally because the raw branding file is excluded from Git. Keep VM images, installers, models and lab credentials under ignored `.tools`/`dist` folders.
+
+Run source regression tests on Linux, then use actual Windows for native import, OCR, offline speech inference and FFmpeg rendering. `packaging/windows/verify.py` runs via the installed launcher with `--module windows.verify` and `CCS_TEST_SPEECH` pointing to a synthetic English WAV. It checks a path containing spaces and non-ASCII characters, the opposed-stereo case, chapters, logo/health endpoints, repeated setup, duplicate launch and refusal to shut down during processing. Follow this with the Python suite and Deno UI checks, plus actual installer update/uninstall/reinstall and shortcut tests. A successful Linux build alone is insufficient.
+
+No Windows VM or evaluation OS is distributed. Source tags, installer/checksum assets and sanitized test reports belong together in the private release. Do not claim Authenticode signing unless a real trusted certificate was used.

@@ -40,6 +40,9 @@ class Handler(BaseHTTPRequestHandler):
         body=json.dumps(data).encode(); self.send_response(code); self.send_header('Content-Type','application/json'); self.send_header('Content-Length',str(len(body))); self.end_headers(); self.wfile.write(body)
     def do_GET(self):
         url=urllib.parse.urlparse(self.path); parts=url.path.strip('/').split('/')
+        if url.path=='/api/health':
+            import os
+            return self.reply({'app':'ccs-video-cleanup','instance':os.environ.get('CCS_APP_ID',''),'version':os.environ.get('CCS_APP_VERSION','local')})
         if url.path=='/api/jobs':
             result=[]
             for j in sorted(JOBS.glob('*'),key=lambda p:p.stat().st_mtime,reverse=True):
@@ -53,6 +56,9 @@ class Handler(BaseHTTPRequestHandler):
                     result.append(row)
             return self.reply(result)
         if url.path=='/': path=ROOT/'ccs/index.html'
+        elif url.path=='/logo.png':
+            from .common import LOGO
+            path=LOGO
         elif len(parts)>=3 and parts[0]=='files':
             path=(JOBS/'/'.join(parts[1:])).resolve()
             if not path.is_relative_to(JOBS.resolve()): return self.reply({'error':'Invalid path'},403)
@@ -88,6 +94,13 @@ class Handler(BaseHTTPRequestHandler):
             n=int(self.headers.get('Content-Length','0'))
             if n>16384: raise ValueError('Request too large')
             data=json.loads(self.rfile.read(n))
+            if self.path=='/api/shutdown':
+                import os
+                if not os.environ.get('CCS_WINDOWS_LAUNCHER') or data.get('instance')!=os.environ.get('CCS_APP_ID'): raise ValueError('Invalid application instance.')
+                if busy() or LOCK.locked(): raise ValueError('Finish the current processing job before closing the app.')
+                self.reply({'stopping':True})
+                threading.Thread(target=self.server.shutdown,daemon=True).start()
+                return
             if self.path=='/api/start':
                 if busy() or LOCK.locked(): raise ValueError('Another video is processing.')
                 source=data['url']; job,canonical=job_for(source)
@@ -113,4 +126,5 @@ def serve(port=8765):
     JOBS.mkdir(exist_ok=True)
     server=ThreadingHTTPServer(('127.0.0.1',port),Handler)
     print(f'Christ Church Video Cleanup: http://127.0.0.1:{port}',flush=True)
-    server.serve_forever()
+    try: server.serve_forever()
+    finally: server.server_close()

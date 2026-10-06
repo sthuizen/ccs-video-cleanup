@@ -1,4 +1,4 @@
-import hashlib, re
+import hashlib, re, os, sys
 from pathlib import Path
 from urllib.parse import urlparse, parse_qs
 from .common import ROOT, BIN, JOBS, YTDLP, command, read_json, write_json, status
@@ -30,7 +30,9 @@ def acquire(job, source, cookies=None):
     if target.exists(): return target
     status(job,'Downloading','Downloading original video, metadata and any English captions')
     # Rank by reported video/audio bitrate before resolution or codec preference.
-    args=[YTDLP,'--no-playlist','--newline','--sleep-requests','1','--js-runtimes','deno','--write-info-json','--write-subs','--write-auto-subs','--sub-langs','en.*','--sub-format','json3','--merge-output-format','mp4','--remux-video','mp4','-f','bv+ba/b','-S','vbr,abr','--format-sort-force','-o',job/'source.%(ext)s']
+    launcher=os.environ.get('CCS_WINDOWS_LAUNCHER')
+    prefix=[sys.executable,launcher,'--module','yt_dlp'] if launcher else [YTDLP]
+    args=prefix+['--no-playlist','--newline','--sleep-requests','1','--js-runtimes','deno','--write-info-json','--write-subs','--write-auto-subs','--sub-langs','en.*','--sub-format','json3','--merge-output-format','mp4','--remux-video','mp4','-f','bv+ba/b','-S','vbr,abr','--format-sort-force','-o',job/'source.%(ext)s']
     if cookies: args.extend(['--cookies-from-browser',cookies])
     # Caption failure must not prevent the media download (YouTube often rate-limits captions).
     try: command(args+[source],job,'download')

@@ -56,5 +56,5 @@ def transcribe(job, video):
         result={'method':'local-whisper-small.en','segments':segments}
     result['segments']=split_gaps(result['segments'])
     write_json(cache,result)
-    (job/'transcript.txt').write_text('\n'.join(f"{s['start']:09.2f}–{s['end']:09.2f} {s['text']}" for s in result['segments']))
+    (job/'transcript.txt').write_text('\n'.join(f"{s['start']:09.2f}–{s['end']:09.2f} {s['text']}" for s in result['segments']), encoding="utf-8")
     return result

@@ -1,0 +1,4 @@
+{
+  "id": "180-js-tests",
+  "output": "Download access defaults to Firefox and preserves browser or anonymous choices across reloads.\r\nDeno download_access exit: 0\r\nBrowser player uses the preview while the download uses the full-quality master.\r\nDeno preview_display exit: 0\r\nProgress display shows percentages, ETA, completed steps and live timers; waiting timers stop.\r\nDeno progress_display exit: 0\r\nProduction review handler preserves original cut precision and accepts explicit edits.\r\nDeno review_precision exit: 0\r\n"
+}

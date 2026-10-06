@@ -1,0 +1,10 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Christ Church Video Cleanup — getting ready</title>
+<style>body{font:18px system-ui;background:#101b27;color:#e6edf4;max-width:800px;margin:50px auto;padding:25px}img{max-width:380px;max-height:100px}section{background:#192938;border-radius:16px;padding:25px;margin-top:30px}p{line-height:1.6;color:#c3cfda}progress{width:100%;height:18px;accent-color:#fa9a2b}pre{white-space:pre-wrap;font-size:13px;max-height:280px;overflow:auto}button{background:#fa9a2b;border:0;padding:15px;border-radius:8px;font-size:16px;cursor:pointer}.error{color:#ff9999;overflow-wrap:anywhere}</style>
+<img src="/logo.png" alt="Christ Church Southampton"><h1>Getting your video tools ready</h1><p>This happens on first use. We’re downloading and checking the tools that run on this computer. You won’t need a cloud AI account or subscription.</p>
+<section><h2 id="stage">Starting…</h2><progress id="progress"></progress><p id="message">Keep the computer awake and connected to the internet. Setup may take several minutes. Your sermons stay on this computer.</p><button id="retry" hidden>Try setup again</button><details><summary>Setup details</summary><pre id="log"></pre></details></section>
+<script>
+const stage=document.querySelector('#stage'),retry=document.querySelector('#retry');
+retry.onclick=async()=>{retry.hidden=true;await fetch('/api/retry',{method:'POST',headers:{'X-CCS-Request':'1'}})};
+async function refresh(){try{let response=await fetch('/api/setup',{cache:'no-store'});if(response.status===404){location.reload();return}let s=await response.json();stage.textContent=s.stage;stage.className=s.error?'error':'';document.querySelector('#log').textContent=s.log;retry.hidden=!s.error;document.querySelector('#progress').hidden=s.error;if(s.ready){document.querySelector('#message').textContent='Setup is complete. Your app is opening…';setTimeout(()=>location.reload(),4500)}}catch(e){/* Keep polling while the setup server switches to the app. */}}
+refresh();setInterval(refresh,2000);
+</script></html>

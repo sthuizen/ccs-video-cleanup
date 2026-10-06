@@ -14,7 +14,7 @@ def infer_reading(reference,segments,reading_time):
     path=ROOT/'assets/bible/engwebp_vpl.txt'
     if not path.exists():return None
     code=CODES[NAMES.index(m[1])]; chapter=int(m[2]); verses=[]
-    for line in path.read_text().splitlines():
+    for line in path.read_text(encoding="utf-8").splitlines():
         v=re.match(rf'{code} {chapter}:(\d+) (.+)',line)
         if v:verses.append((int(v[1]),tokens(v[2]),v[2]))
     if not verses:return None

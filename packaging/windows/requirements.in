@@ -1,0 +1,13 @@
+# Windows x64 CPython 3.13; see requirements.lock for resolved hashes.
+yt-dlp[default,deno]==2026.8.19
+faster-whisper==1.2.1
+Pillow==12.3.0
+numpy==2.5.3
+scipy==1.18.1
+av==16.1.0
+onnxruntime==1.30.0
+opencv-python-headless>=4.5.1.48
+pyclipper>=1.2.0
+Shapely>=1.7.1
+six>=1.15.0
+PyYAML>=6

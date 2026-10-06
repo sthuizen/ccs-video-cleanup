@@ -1,0 +1,4 @@
+{
+  "id": "windows11-installer",
+  "output": "Preparing the local tools. Please keep this window open.\r\nDownloading verified Windows video tools.\r\nChecking video filters, image tools and local OCR.\r\nDownloading and loading the local speech model. This can take several minutes.\r\nSaving dependency and model notices.\r\nReady. Opening your sermon preparation app.\r\nFinal dependency checkpoint/setup and licence retention: PASS\r\nActive job update refused: PASS\r\nActive job uninstall refused: PASS\r\nFinal installer update: PASS; SHA256 6E3D6C9E0E0DCE752C8DAD1E3C3534E98B8F7B54D5C041D691ABACEADB84F221\r\nDesktop shortcut: PASS\r\nUninstall removed app and preserved videos/models: PASS\r\n{\r\n    \"app\":  \"ccs-video-cleanup\",\r\n    \"instance\":  \"325be4d48ade86b0\",\r\n    \"version\":  \"1.2.0\"\r\n}\r\nReinstall reused setup and retained data: PASS\r\n"
+}

@@ -12,7 +12,8 @@ class DownloadQuality(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             with patch('ccs.acquire.command') as command:
                 acquire(Path(tmp), 'https://www.youtube.com/watch?v=c4qtGGSgBQI')
-            args = [str(x) for x in command.call_args.args[0][1:]]
+            full = [str(x) for x in command.call_args.args[0]]
+            args = full[full.index('--no-playlist'):]
             opts = parse_options(args).ydl_opts
             opts['quiet'] = True
             with YoutubeDL(opts) as downloader:

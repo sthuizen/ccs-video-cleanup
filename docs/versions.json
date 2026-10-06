@@ -16,6 +16,15 @@
       "sha256": "02467a35e38fbd618e02ed20fe6a58f07e474131e54a9182a23618845c24f0f8",
       "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.1.0",
       "status": "recommended"
+    },
+    {
+      "version": "1.2.0",
+      "platform": "Windows 10/11 x64",
+      "filename": "ccs-video-cleanup_1.2.0_windows_x64_setup.exe",
+      "bytes": 12588704,
+      "sha256": "6e3d6c9e0e0dce752c8dad1e3c3534e98b8f7b54d5c041d691abaceadb84f221",
+      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.2.0",
+      "status": "Windows church edition; unsigned installer"
     }
   ]
 }

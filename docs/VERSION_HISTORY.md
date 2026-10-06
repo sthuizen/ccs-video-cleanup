@@ -4,6 +4,18 @@
 
 This archive was established on 6 October 2026. There was no pre-existing Git history in the workspace. It preserves the two available versioned installers and their source snapshots; it does not invent a commit history for earlier unversioned edits.
 
+## 1.2.0 — Windows church edition
+
+- Windows 10/11 x64 installer built on Linux with NSIS and an isolated embedded Python runtime.
+- Church-authorized logo in the app, desktop/Start menu icon and video intro.
+- Automatic first-run dependency/model setup with progress, hash checks and retry/checkpoint recovery.
+- Direct, publisher-checked Microsoft runtime installation when needed; specialist processing binaries are downloaded separately.
+- Cross-platform processing locks, Windows fonts, UTF-8 metadata/paths and direct Python-module downloader invocation.
+- Duplicate launch reconnects; update/uninstall refuse active processing; uninstall preserves user data.
+- Windows guide, included quick start and build/verification sources retained for maintenance.
+
+Windows 1.2.0 adds a platform edition; Ubuntu/Debian users continue using the preserved 1.1.0 installer. Historical release files remain unchanged. See [Windows validation](validation/v1.2.0.md).
+
 ## 1.1.0 — recommended application-only package
 
 - Source-only amd64 `.deb`, with the public-domain Bible asset.

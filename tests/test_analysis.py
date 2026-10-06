@@ -15,7 +15,7 @@ class Analysis(unittest.TestCase):
         path=ROOT/'assets/bible/engwebp_vpl.txt'
         if not path.exists():self.skipTest('Bible dataset not installed')
         selected=[]
-        for line in path.read_text().splitlines():
+        for line in path.read_text(encoding='utf-8').splitlines():
             if line.startswith(('ROM 2:1 ','ROM 2:2 ','ROM 2:3 ','ROM 2:4 ','ROM 2:5 ')):selected.append(line.split(' ',2)[2])
         segments=[{'start':10+i*30,'end':20+i*30,'text':t} for i,t in enumerate(selected)]
         result=infer_reading('Romans 2',segments,0)

@@ -1,13 +1,13 @@
 """Optional visual jitter measurements on static-background patches."""
 import subprocess
 import numpy as np
-from .common import BIN, probe, write_json
+from .common import BIN, probe, write_json, process_options
 
 def motion(path,offset,seconds=8):
     import cv2
     v=next(x for x in probe(path)['streams'] if x['codec_type']=='video')
     # Ignore the preacher, leaves and projection; use the upper-left wall.
-    raw=subprocess.check_output([str(BIN/'ffmpeg'),'-v','error','-ss',str(offset),'-t',str(seconds),'-i',str(path),'-an','-vf','fps=15,scale=640:-2,crop=180:120:70:15,format=gray','-f','rawvideo','-'])
+    raw=subprocess.check_output([str(BIN/'ffmpeg'),'-v','error','-ss',str(offset),'-t',str(seconds),'-i',str(path),'-an','-vf','fps=15,scale=640:-2,crop=180:120:70:15,format=gray','-f','rawvideo','-'], **process_options())
     frames=np.frombuffer(raw,np.uint8).reshape(-1,120,180)
     points=cv2.goodFeaturesToTrack(frames[0],maxCorners=100,qualityLevel=.001,minDistance=5)
     if points is None or len(points)<8:return None

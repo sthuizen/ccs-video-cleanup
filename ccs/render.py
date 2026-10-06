@@ -1,8 +1,8 @@
-import json, re, subprocess
+import json, re, subprocess, os
 from datetime import datetime
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
-from .common import ROOT, BIN, LOGO, command, probe, status, write_json, read_json, exclusive
+from .common import ROOT, BIN, LOGO, command, probe, status, write_json, read_json, exclusive, process_options
 from .acquire import video_path
 INTRO_SECONDS=5
 CLEAN='highpass=f=75,lowpass=f=11000,afftdn=nf=-30:nr=10:tn=1,equalizer=f=300:t=q:w=1:g=-1.5,equalizer=f=3000:t=q:w=1:g=1.5,acompressor=threshold=0.125:ratio=2:attack=15:release=200:makeup=1'
@@ -17,7 +17,8 @@ def validate(plan):
 def card(job, plan, width, height):
     img=Image.new('RGB',(width,height),'#101e2b'); draw=ImageDraw.Draw(img)
     def font(size,bold=False):
-        return ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans'+('-Bold' if bold else '')+'.ttf',max(12,int(size)))
+        candidate = (Path(os.environ.get('WINDIR', 'C:/Windows'))/'Fonts'/('arialbd.ttf' if bold else 'arial.ttf')) if os.name == 'nt' else Path('/usr/share/fonts/truetype/dejavu/DejaVuSans'+('-Bold' if bold else '')+'.ttf')
+        return ImageFont.truetype(str(candidate),max(12,int(size)))
     scale=width/1280
     if LOGO.is_file():
         logo=Image.open(LOGO).convert('RGBA')
@@ -45,7 +46,8 @@ def card(job, plan, width, height):
     for line in lines:
         draw.text((width/2,y),line,font=f,anchor='mt',fill='white'); y+=int(f.size*1.3)
     draw.text((width/2,max(y+20*scale,height*.73)),plan['passage'],font=font(30*scale),anchor='mt',fill='#f89b28')
-    date=datetime.strptime(plan['date'],'%Y-%m-%d').strftime('%-d %B %Y')
+    parsed_date=datetime.strptime(plan['date'],'%Y-%m-%d')
+    date=f'{parsed_date.day} {parsed_date:%B %Y}'
     draw.text((width/2,height*.87),date,font=font(24*scale),anchor='mt',fill='#c3cfda')
     img.save(job/'intro.png')
 
@@ -54,7 +56,7 @@ def mono_filter(job, video, start, duration):
     import numpy as np
     args=[str(BIN/'ffmpeg'),'-v','error','-ss',str(start),'-t',str(min(30,duration)),'-i',str(video),'-vn','-ar','16000','-f','f32le','-']
     streams=probe(video)['streams']; channels=next(x['channels'] for x in streams if x['codec_type']=='audio')
-    raw=subprocess.check_output(args)
+    raw=subprocess.check_output(args, **process_options())
     a=np.frombuffer(raw,dtype='<f4').reshape(-1,channels)
     stats={'channels':channels,'rms':[float(np.sqrt(np.mean(a[:,i]**2))) for i in range(channels)]}
     if channels==1: chosen='aformat=channel_layouts=mono'
@@ -82,7 +84,7 @@ def prepare_sermon(job, plan, stabilize=True):
     mono=mono_filter(job,video,start,duration); audio=mono+','+CLEAN
     status(job,'Cleaning audio','Measuring cleaned audio for loudness normalization',total_seconds=duration)
     command([BIN/'ffmpeg','-y','-ss',str(start),'-t',str(duration),'-i',video,'-vn','-af',audio+',loudnorm=I=-18:TP=-1.5:LRA=11:print_format=json','-f','null','-'],job,'loudness-measure')
-    log=(job/'loudness-measure.log').read_text()
+    log=(job/'loudness-measure.log').read_text(encoding='utf-8', errors='replace')
     match=re.findall(r'\{\s*"input_i".*?\}',log,re.S)
     if not match: raise RuntimeError('FFmpeg did not return loudness measurements.')
     measured=json.loads(match[-1]); write_json(job/'loudness.json',measured)
@@ -99,12 +101,12 @@ def prepare_sermon(job, plan, stabilize=True):
         reuse=(job/'transforms.trf').exists() and (job/'measurement-settings.json').exists() and read_json(job/'measurement-settings.json')==measure_settings
         if not reuse:
             with (job/'stabilize-measure.log').open('w') as log:
-                subprocess.run([str(BIN/'ffmpeg'),'-y','-threads','6','-ss',str(start),'-t',str(duration),'-i',str(video),'-an','-vf',vf+',vidstabdetect=shakiness=4:accuracy=15:result=transforms.trf','-f','null','-'],cwd=job,stdout=log,stderr=log,check=True)
+                subprocess.run([str(BIN/'ffmpeg'),'-y','-threads','6','-ss',str(start),'-t',str(duration),'-i',str(video),'-an','-vf',vf+',vidstabdetect=shakiness=4:accuracy=15:result=transforms.trf','-f','null','-'],cwd=job,stdout=log,stderr=log,check=True, **process_options())
             write_json(job/'measurement-settings.json',measure_settings)
         vf+=',vidstabtransform=input=transforms.trf:smoothing=15:optalgo=gauss:optzoom=0:zoom=3:maxshift=12:maxangle=0.01:crop=black:interpol=bilinear'
     status(job,'Rendering','Encoding the sermon with cleaned mono audio',total_seconds=duration,log_file='render.log')
     with (job/'render.log').open('w') as log:
-        subprocess.run([str(BIN/'ffmpeg'),'-y','-threads','6','-ss',str(start),'-t',str(duration),'-i',str(video),'-map','0:v:0','-map','0:a:0','-vf',vf,'-af',audio+','+norm,'-c:v','libx264','-preset','veryfast','-crf','19','-threads','6','-c:a','aac','-b:a','128k','-ar','48000','-ac','1','-movflags','+faststart','sermon.mp4'],cwd=job,stdout=log,stderr=log,check=True)
+        subprocess.run([str(BIN/'ffmpeg'),'-y','-threads','6','-ss',str(start),'-t',str(duration),'-i',str(video),'-map','0:v:0','-map','0:a:0','-vf',vf,'-af',audio+','+norm,'-c:v','libx264','-preset','veryfast','-crf','19','-threads','6','-c:a','aac','-b:a','128k','-ar','48000','-ac','1','-movflags','+faststart','sermon.mp4'],cwd=job,stdout=log,stderr=log,check=True, **process_options())
     write_json(job/'media-settings.json',settings)
     return settings
 
@@ -130,7 +132,7 @@ def render(job, stabilize=True):
         if offset<0 or end_offset<=offset:continue
         label=label.replace('\\','\\\\').replace('=','\\=').replace(';','\\;').replace('#','\\#').replace('\n',' ')
         meta.extend(['[CHAPTER]','TIMEBASE=1/1000',f'START={round(offset*1000)}',f'END={round(end_offset*1000)}',f'title={label}'])
-    (job/'chapters.ffmeta').write_text('\n'.join(meta)+'\n')
+    (job/'chapters.ffmeta').write_text('\n'.join(meta)+'\n', encoding='utf-8')
     write_json(job/'sermon-details.json',{'title':plan['title'],'date':plan['date'],'passage':plan['passage'],'original_cut':{'start':plan['start'],'end':plan['end']},'chapters':[{'time':x,'title':t} for x,t in chapter_starts]})
     (job/'concat.txt').write_text("file 'intro.mp4'\nfile 'sermon.mp4'\n")
     status(job,'Joining intro','Adding the five-second church intro card',total_seconds=duration+INTRO_SECONDS)

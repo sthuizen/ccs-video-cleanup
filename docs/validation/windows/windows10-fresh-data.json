@@ -1,0 +1,4 @@
+{
+  "id": "windows10-fresh-data",
+  "output": "Preparing the local tools. Please keep this window open.\r\nInstalling the locally tested OCR wrapper.\r\nDownloading verified Windows video tools.\r\nChecking video filters, image tools and local OCR.\r\nDownloading and loading the local speech model. This can take several minutes.\r\nSaving dependency and model notices.\r\nReady. Opening your sermon preparation app.\r\nFresh private libraries and Unicode tool/model data path: PASS; upstream caches reused\r\n"
+}

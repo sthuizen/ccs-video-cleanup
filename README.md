@@ -2,7 +2,16 @@
 
 Prepare a full church-service recording into a sermon video: a five-second introduction followed by the selected Bible reading and sermon, with cleaned mono audio and optional camera stabilization. A local browser interface lets you review the date, passage, title and cut points before creating the finished video.
 
-**Start with [version 1.1.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.1.0).** This private repository preserves the source and both available installers. The older 1.0.0 package is a legacy archive; use 1.1.0 for a new installation.
+**Choose the installer for your computer:** [Windows 10/11](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.2.0) or [Ubuntu/Debian](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.1.0). This private repository preserves earlier versions too. Version 1.0.0 is a legacy archive.
+
+## Install on Windows 10 or 11
+
+1. Sign into GitHub with access to this private repository. Download `ccs-video-cleanup_1.2.0_windows_x64_setup.exe` and its `.exe.sha256` checksum from the [Windows release](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.2.0).
+2. To check the download, run `Get-FileHash .\ccs-video-cleanup_1.2.0_windows_x64_setup.exe -Algorithm SHA256` in PowerShell and compare it with the checksum file. Run the installer and follow the wizard. It installs for your user account and creates a branded desktop and Start menu shortcut.
+3. Open **Christ Church Video Cleanup**. Keep the PC online and awake during the first setup. The browser shows progress and retry controls; no Python installation or AI account is needed. Approve the Microsoft C++ prerequisite prompt if it appears.
+4. When the app opens, follow **Prepare a sermon** below.
+
+The church logo is included for the church's requested use. This installer supports 64-bit Intel/AMD PCs, with 8 GB RAM recommended. It is currently unsigned, so Windows may show an unknown-publisher or SmartScreen prompt. See the [Windows guide](packaging/windows/README.md) for checksums, troubleshooting, dependencies, file locations and removal.
 
 ## Install on Ubuntu or Debian
 
@@ -42,7 +51,7 @@ The app preserves the source and analysis evidence. It checks stereo phase befor
 
 | You need to… | Read |
 |---|---|
-| Install, migrate, add a logo or uninstall | [Package instructions](packaging/README.md) |
+| Install, migrate, add a logo or uninstall | [Windows instructions](packaging/windows/README.md) or [Ubuntu/Debian instructions](packaging/README.md) |
 | Prepare a service and correct uncertain information | [Operator guide](docs/USER_GUIDE.md) |
 | Resolve setup, download, review or rendering problems | [Troubleshooting](docs/TROUBLESHOOTING.md) |
 | Back up jobs, maintain tools or recover an installation | [Maintenance and recovery](docs/MAINTENANCE.md) |
@@ -56,8 +65,11 @@ The app preserves the source and analysis evidence. It checks stereo phase befor
 
 | Version | Status | Packaging |
 |---|---|---|
-| [1.1.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.1.0) | Recommended | Small application-only `.deb`; APT libraries and user setup |
+| [1.2.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.2.0) | Windows edition | Branded x64 installer; automatic user setup |
+| [1.1.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.1.0) | Recommended for Ubuntu/Debian | Small application-only `.deb`; APT libraries and user setup |
 | [1.0.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.0.0) | Legacy private archive | Large bundled runtime; redistribution audit unfinished |
+
+Version 1.2.0 was tested in actual Windows 10/11 KVM guests, including real OCR, offline speech inference, synthetic media rendering, 23 Python tests, four browser-interface checks and installation/update/uninstall data retention. See the [Windows validation record](docs/validation/v1.2.0.md) and [reproduction guide](docs/WINDOWS_TESTING.md) for exact scope and network limits.
 
 Version 1.1.0 passed all 19 Python tests, a synthetic media render, real OCR, offline speech-model loading, repeat setup and web/API checks in isolated Ubuntu 24.04 and Debian 13 userspaces. Those tests shared the host kernel; graphical desktop login/autostart was not exercised. The [validation record](docs/validation/v1.1.0.json) identifies the exact tested installer. [Artifact checksums and byte sizes](docs/versions.json) distinguish original installers from future rebuilds.
 

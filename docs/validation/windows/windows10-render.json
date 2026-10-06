@@ -1,0 +1,29 @@
+{
+  "audio_channels": 1,
+  "duration": 11.037333,
+  "expected_duration": 11.0,
+  "full_decode": "passed",
+  "stabilized": true,
+  "plan": {
+    "title": "God judges fairly",
+    "passage": "Romans 2:1\u00e2\u20ac\u201c16",
+    "date": "2026-10-04",
+    "start": 1,
+    "end": 7,
+    "duration": 8,
+    "issues": [],
+    "confirmed": true,
+    "sections": [
+      {
+        "name": "Bible reading",
+        "start": 1,
+        "end": 3
+      },
+      {
+        "name": "Sermon",
+        "start": 3,
+        "end": 7
+      }
+    ]
+  }
+}

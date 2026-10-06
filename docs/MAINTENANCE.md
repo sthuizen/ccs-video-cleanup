@@ -44,3 +44,11 @@ For migration from the project installation, follow the [service-switching instr
 `main` holds current source and documentation. Tags preserve published source snapshots; Releases preserve original installers and checksum files. Do not overwrite an existing release installer with a rebuild under the same filename. Bump the version, test it, update `docs/versions.json` and attach new validation evidence. Keep a clone plus downloaded release assets for an independent offline archive: `git clone` alone does not download installer attachments.
 
 Grant repository access only to intended collaborators. [GitHub's visibility documentation](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/setting-repository-visibility) explains the consequences of making a repository public. Resolve source/branding rights and the legacy bundle's outstanding obligations before considering such a change; see [RIGHTS.md](../RIGHTS.md).
+
+## Windows data and recovery
+
+Use **Video files and evidence** in the Start menu to open `%LOCALAPPDATA%\CCSVideoCleanup`. Back up `jobs`, manual corrections and any original videos referenced outside that folder. Installed application files live separately in `%LOCALAPPDATA%\Programs\CCSVideoCleanup` by default.
+
+Finish processing before running a newer installer or uninstalling. The application refuses to interrupt a held processing lock. Uninstall keeps data, models and downloaded tools. Reinstall the same version and reopen the shortcut to reuse completed setup. To reclaim retained data, first make a verified backup, then remove the data folder manually after uninstalling.
+
+Dependency pins change only through a new tested release. First-run notices and `setup.json` record installed versions. A changed lock triggers private dependency refresh while retaining jobs/models. Use the setup log and retry button for recoverable setup failures. See the [Windows guide](../packaging/windows/README.md).

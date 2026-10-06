@@ -44,7 +44,7 @@ The special opposed-stereo source makes the phase check essential. Do not simpli
 | `finished.mp4`, `validation.json` | Full-quality master and validation |
 | `preview.mp4`, `preview-settings.json`, `preview-validation.json` | Browser-compatible derivative and its checks |
 
-Not every source/stage creates every file. Completed transcription and OCR are reused; a failed partial stage is retried. Rendering caches depend on saved settings, so intro edits can reuse the sermon. JSON writes use temporary files and replacement. The cross-process file lock and web worker logic prevent concurrent production processing. A browser close does not kill the background service.
+Not every source/stage creates every file. Completed transcription and OCR are reused; a failed partial stage is retried. Rendering caches depend on saved settings, so intro edits can reuse the sermon. JSON writes use temporary files and replacement. The cross-process file lock and web worker logic prevent concurrent production processing. A browser close does not kill the background server. Linux uses `flock`; Windows uses an `msvcrt` byte-range lock with a shared per-user file, including CLI and desktop operations.
 
 ## Installation boundaries
 
@@ -72,3 +72,11 @@ The packaged launcher sets its own appropriate paths into user data and `/usr/bi
 The web server binds to loopback and has no account/password authentication. Treat it as a local desktop application, not a remotely hosted service. It validates media paths and requires its expected JSON request header for POST operations; these are not a replacement for authentication if someone changes the bind/proxy configuration.
 
 Dependency/model downloads and YouTube acquisition need internet access. YouTube sign-in cookies are read locally when requested. Transcripts, OCR, manual review and media remain in local jobs. Nothing is automatically uploaded. Keep jobs, caches, cookies and credentials out of commits and issue attachments.
+
+## Windows desktop lifecycle
+
+`packaging/windows/launcher.py` uses an isolated embedded Python runtime and private library directory. Data defaults to `%LOCALAPPDATA%\CCSVideoCleanup`; the application defaults to `%LOCALAPPDATA%\Programs\CCSVideoCleanup`. A first-run loopback page prepares tools, checks their hashes/native imports and warms the model before switching to the normal interface. A successful dependency checkpoint avoids repeating wheel installation after a later download failure. Only a completed setup writes `setup.json`.
+
+A launch lock and identity-bearing health endpoint reconnect repeated shortcuts to the same server. The server runs separately from the browser. Updates/uninstall request a local shutdown with the expected request header and instance check; the processing lock refuses that shutdown during a job. There is no Windows service or login startup registration. Separate app and data folders allow removal of the app while retaining recordings and models.
+
+Windows supplies fonts from its Fonts directory. Metadata/text explicitly use UTF-8. Subprocesses hide console windows; the downloader executes a Python module directly rather than passing arguments through a batch shell. The Windows interface starts with anonymous YouTube access; operators can select Firefox cookies when required. Neither platform depends on a cloud AI service.

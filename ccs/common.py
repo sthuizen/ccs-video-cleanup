@@ -1,5 +1,6 @@
 from pathlib import Path
 import json, os, subprocess, time
+from .locking import file_lock, LockBusy
 ROOT = Path(__file__).resolve().parent.parent
 BIN = Path(os.environ.get('CCS_BIN_DIR', str(ROOT / '.tools/bin')))
 DATA_ROOT = Path(os.environ.get('CCS_DATA_DIR', str(ROOT)))
@@ -10,12 +11,14 @@ LOGO = Path(os.environ.get('CCS_LOGO', str(ROOT / 'assets/church-logo.png')))
 YTDLP = Path(os.environ.get('CCS_YTDLP', str(ROOT / '.venv/bin/yt-dlp')))
 os.environ['PATH'] = str(BIN) + os.pathsep + os.environ.get('PATH', '')
 os.environ.setdefault('OMP_NUM_THREADS', '6')
+def process_options():
+    return {'creationflags': subprocess.CREATE_NO_WINDOW} if os.name == 'nt' else {}
 def write_json(path, value):
     path = Path(path)
     tmp = path.with_suffix(path.suffix + '.tmp')
-    tmp.write_text(json.dumps(value, indent=2, ensure_ascii=False))
+    tmp.write_text(json.dumps(value, indent=2, ensure_ascii=False), encoding="utf-8")
     tmp.replace(path)
-def read_json(path): return json.loads(Path(path).read_text())
+def read_json(path): return json.loads(Path(path).read_text(encoding="utf-8"))
 def status(job, stage, detail='', **progress):
     print(f'{stage}: {detail}', flush=True)
     now=time.time(); path=job/'status.json'
@@ -37,12 +40,12 @@ def command(args, job, name):
         record=read_json(path); record.update(log_file=name+'.log',log_started_at=time.time())
         write_json(path,record)
     with (job/(name+'.log')).open('w') as log:
-        result = subprocess.run([str(x) for x in args], stdout=log, stderr=subprocess.STDOUT)
+        result = subprocess.run([str(x) for x in args], stdout=log, stderr=subprocess.STDOUT, **process_options())
     if result.returncode:
-        tail=(job/(name+'.log')).read_text(errors='replace')[-3000:]
+        tail=(job/(name+'.log')).read_text(encoding='utf-8', errors='replace')[-3000:]
         raise RuntimeError(f'{name} failed ({result.returncode}): {tail}')
 def probe(path):
-    return json.loads(subprocess.check_output([str(BIN/'ffprobe'),'-v','error','-show_streams','-show_chapters','-show_format','-of','json',str(path)]))
+    return json.loads(subprocess.check_output([str(BIN/'ffprobe'),'-v','error','-show_streams','-show_chapters','-show_format','-of','json',str(path)], **process_options()))
 def timestamp(t):
     t=round(float(t)); return f'{t//3600:02d}:{t//60%60:02d}:{t%60:02d}'
 def seconds(value):
@@ -52,26 +55,23 @@ def seconds(value):
     return sum(float(p)*60**i for i,p in enumerate(reversed(parts)))
 
 # A shared process lock prevents a desktop job and CLI job from writing the same media.
-import fcntl, functools, threading
+import functools, threading
 _lock_state=threading.local()
 def exclusive(fn):
     @functools.wraps(fn)
     def wrapped(*args,**kwargs):
         if getattr(_lock_state,'depth',0): return fn(*args,**kwargs)
         lockpath=LOCK; lockpath.parent.mkdir(parents=True,exist_ok=True)
-        with lockpath.open('a') as handle:
-            try: fcntl.flock(handle,fcntl.LOCK_EX|fcntl.LOCK_NB)
-            except BlockingIOError: raise ValueError('Another video is processing. Wait for it to finish.')
-            _lock_state.depth=1
-            try: return fn(*args,**kwargs)
-            finally:
-                _lock_state.depth=0; fcntl.flock(handle,fcntl.LOCK_UN)
+        try:
+            with file_lock(lockpath):
+                _lock_state.depth=1
+                try: return fn(*args,**kwargs)
+                finally: _lock_state.depth=0
+        except LockBusy:
+            raise ValueError('Another video is processing. Wait for it to finish.')
     return wrapped
 
 def busy():
-    LOCK.parent.mkdir(parents=True, exist_ok=True)
-    with LOCK.open('a') as handle:
-        try: fcntl.flock(handle,fcntl.LOCK_EX|fcntl.LOCK_NB)
-        except BlockingIOError: return True
-        fcntl.flock(handle,fcntl.LOCK_UN)
-        return False
+    try:
+        with file_lock(LOCK): return False
+    except LockBusy: return True

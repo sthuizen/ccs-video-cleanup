@@ -38,3 +38,13 @@ Look at the named stage log in that folder. Correct the reported cause, then ret
 ## Reporting a problem
 
 Use the repository's [issues](https://github.com/thenailedone/ccs-video-cleanup/issues). Include package version, distro/Python version, action, error and the smallest relevant log excerpt. Explain whether it is the package or original installation. Remove credentials, signed download URLs and sensitive transcript material. Do not attach cookies, full private recordings, home directories or model/venv archives. A short synthetic reproduction is preferable when the problem is about rendering or UI logic.
+
+## Windows first setup and launch
+
+Open **Setup log** from the application's Start menu folder, or expand **Setup details** in the browser. **Try setup again** resumes preparation after fixing internet access or approving the Microsoft prerequisite. Do not delete video jobs to repair tool setup. A failed hash check requires a clean retry or an updated release, never disabling verification. For a managed PC, an administrator may need to install the Microsoft Visual C++ x64 runtime.
+
+An unknown-publisher/SmartScreen prompt is possible because the church installer is unsigned. Confirm the private release origin and checksum. Normal use does not require administrator rights. Another application occupying port 8765 prevents launch; close that conflicting application and reopen the shortcut. Check `%LOCALAPPDATA%\CCSVideoCleanup\server.log` if launch still fails.
+
+Updates and uninstall refuse to interrupt active processing. Finish the job first. Browser closing does not stop the server; reopening the shortcut reconnects. Uninstall retains `%LOCALAPPDATA%\CCSVideoCleanup`, including jobs and models. See the [Windows guide](../packaging/windows/README.md) for command-line maintenance.
+
+On a new Windows installation, the default browser may show its own welcome screens before the app page. Complete that browser setup; the church application does not require browser sync or a Microsoft account.
