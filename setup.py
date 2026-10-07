@@ -31,6 +31,9 @@ if not (BIN/'deno').exists():
     (BIN/'deno').chmod(0o755)
 subprocess.run([BIN/'uv','venv','--python','3.12',ROOT/'.venv'],check=True) if not (ROOT/'.venv/bin/python').exists() else None
 subprocess.run([BIN/'uv','pip','install','--python',ROOT/'.venv/bin/python','-r',ROOT/'requirements.txt'],check=True)
+# The enhancer and its embedded model are obtained directly from the verified
+# upstream release; subsequent audio processing is entirely local.
+subprocess.run([ROOT/'.venv/bin/python','-m','ccs.audio_setup','--directory',BIN],cwd=ROOT,check=True)
 # Warm the speech model cache now, so weekly runs require no model downloads.
 subprocess.run([ROOT/'.venv/bin/python','-c',"from faster_whisper import WhisperModel; WhisperModel('small.en',device='cpu',compute_type='int8',download_root="+repr(str(ROOT/'.models/whisper'))+")"],check=True)
 logo=ROOT/'assets/church-logo.png'; logo.parent.mkdir(exist_ok=True)

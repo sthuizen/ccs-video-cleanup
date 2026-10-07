@@ -12,7 +12,7 @@ Open **Christ Church Video Cleanup**. A browser close leaves the server and curr
 
 Paste the service URL and choose **Prepare sermon**. Download access defaults to Firefox and is remembered in that browser. If YouTube requests sign-in, sign into YouTube in Firefox on this computer and use `firefox` in the download-access field. Clear the field for anonymous downloads. Browser cookies are read locally by yt-dlp; do not export or share them to report a problem.
 
-Downloads select the highest reported video/audio bitrates available without a resolution cap. Separate streams are merged without re-encoding the source. English captions are used when available; otherwise the app transcribes locally. OCR is performed when title/passage evidence requires it.
+Downloads select the highest reported video/audio bitrates available without a resolution cap. Separate streams are merged without re-encoding the source. English captions are used when available; otherwise the app transcribes locally. In the current Linux source, missing or weak reading/ending evidence also triggers short local audio checks, whose results are stored separately from the original captions. OCR is performed when title/passage evidence requires it.
 
 Percentages and estimates appear where work is measurable. Setup and brief analysis may show an indeterminate indicator. Download percentages concern the current file, because video, audio and captions can transfer separately. Estimates change with observed speed and CPU load.
 
@@ -28,7 +28,7 @@ Atypical service order, announcements, imperfect captions and unclear slides can
 | Passage | The recorded Bible passage and verse range |
 | Title | Explicitly stated sermon title, or an operator-approved descriptive title based on recorded words |
 
-Times are measured against the original service, not the new video with its added intro. Use `HH:MM:SS` for clarity. A proposed boundary is evidence to check, not proof. Do not invent an official title. When clear verse matching succeeds, the start is placed just before the first verse; otherwise the reading announcement can be a candidate.
+Times are measured against the original service, not the new video with its added intro. Use `HH:MM:SS` for clarity. A proposed boundary is evidence to check, not proof. Do not invent an official title. The current Linux detector includes a brief reader announcement immediately before matched Scripture; a longer host introduction or prayer is usually excluded. Saved manual cuts remain authoritative.
 
 Choose **Save details and create video** after checking the fields. A clearly supported plan can render automatically. Corrections reuse the downloaded source, transcript and OCR. Intro-only changes can reuse the already processed sermon; preserve the job folder for this to work.
 
@@ -38,7 +38,7 @@ Watch the intro, first spoken words and closing words. Confirm date/title/passag
 
 The download is `finished.mp4`, the full-quality H.264/mono AAC master. Browser playback uses a separate preview at up to 720p, with the finished audio copied intact. Preview softness does not mean the downloaded master has been reduced to preview quality.
 
-Automatic validation decodes the output and checks expected duration and mono audio. It cannot certify that the operator selected the correct theological passage, date or spoken boundary. Noise reduction cannot remove every cough or room reflection without harming speech; stabilization applies modest framing changes. Source media is retained.
+Automatic validation decodes the output and checks expected duration and mono audio. The current Linux renderer also measures final loudness and true peak. It cannot certify that the operator selected the correct theological passage, date or spoken boundary. Speech cleanup reduces some background noise and uses constant gain to avoid lifting quiet pauses, but cannot remove every cough or room reflection without harming speech. Listen especially to soft prayer, word endings and audience sounds. Stabilization applies modest framing changes. Source media is retained.
 
 ## Command line
 

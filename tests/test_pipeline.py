@@ -26,6 +26,21 @@ class Media(unittest.TestCase):
             render(j)
             self.assertEqual(read_json(j/'validation.json')['audio_channels'],1)
             self.assertTrue((j/'finished.mp4').is_file())
+            # Master audio comes from enhanced PCM, encoded once after exact
+            # intro silence. A decode/re-encode concat previously added codec
+            # delay and stalled on a real long near-silent recording.
+            import numpy as np, subprocess
+            from scipy.signal import correlate, correlation_lags
+            norm=read_json(j/'audio-settings.json')['normalization_filter']
+            def pcm(args):
+                return np.frombuffer(subprocess.check_output([str(BIN/'ffmpeg'),'-v','error']+args+['-ar','48000','-ac','1','-f','f32le','-']),'<f4')
+            expected_audio=pcm(['-i',str(j/'cleaned-audio.wav'),'-af',norm])
+            actual_audio=pcm(['-ss','5','-i',str(j/'finished.mp4'),'-vn'])
+            n=min(len(expected_audio),len(actual_audio))
+            correlations=correlate(actual_audio[:n],expected_audio[:n],method='fft')
+            lags=correlation_lags(n,n); near=np.abs(lags)<=4800
+            lag=lags[near][np.argmax(correlations[near])]
+            self.assertLess(abs(lag)/48000,.008,'Master must not accumulate a second AAC join delay')
             from ccs.common import probe
             chapters=probe(j/'finished.mp4')['chapters']
             self.assertEqual([c['tags']['title'] for c in chapters],['Intro','Bible reading','Sermon'])

@@ -52,7 +52,7 @@ def prepare(logo=None, update_downloader=False):
             # Do not override interpreter requirements for its native dependencies.
             run(pip + ['--no-deps', '--ignore-requires-python', 'rapidocr-onnxruntime==1.4.4'])
             filters = subprocess.check_output(['/usr/bin/ffmpeg','-hide_banner','-filters'], stderr=subprocess.STDOUT, text=True)
-            for name in ('vidstabdetect','vidstabtransform','afftdn','loudnorm'):
+            for name in ('vidstabdetect','vidstabtransform','afftdn','loudnorm','agate','alimiter'):
                 if name not in filters: raise RuntimeError(f'The distribution FFmpeg lacks {name}.')
             run([python, '-c', "import cv2, numpy, scipy, PIL, av, ctranslate2, tokenizers, onnxruntime; from rapidocr_onnxruntime import RapidOCR; RapidOCR(); print('Image, media and OCR dependencies verified')"])
             run([environment/'bin/deno', '--version'])
@@ -75,6 +75,10 @@ def prepare(logo=None, update_downloader=False):
                 run([python, '-m', 'pip', 'freeze'], stdout=inventory)
             record = {'revision': REVISION, 'python_minor': list(sys.version_info[:2]), 'python': subprocess.check_output([str(python), '--version'], text=True).strip()}
             temporary=marker.with_suffix('.tmp'); temporary.write_text(json.dumps(record, indent=2)); temporary.replace(marker)
+        # Separate direct download, outside the .deb and APT-owned directories.
+        sys.path.insert(0, str(APP))
+        from ccs.audio_setup import install as install_speech_enhancer
+        install_speech_enhancer(DATA/'.tools/bin')
         if update_downloader:
             run([python, '-m', 'pip', 'install', '--only-binary=:all:', '--upgrade', 'yt-dlp[default,deno]'])
             with (DATA/'third-party-notices/python-dependencies.txt').open('w') as inventory:

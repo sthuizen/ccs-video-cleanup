@@ -9,17 +9,18 @@ def tokens(text):
     text=text.lower().replace('judgement','judgment').replace('gospel','good news').replace('people','men')
     return set(re.sub(r'(?:ing|ed|s)$','',x) for x in re.findall(r'[a-z]+',text) if x not in STOP and len(x)>2)
 def infer_reading(reference,segments,reading_time):
-    m=re.match(r'(.+?) (\d+)',reference)
+    m=re.match(r'(.+?) (\d+)(?::(\d+)(?:[–—-](\d+))?)?',reference)
     if not m or m[1] not in NAMES:return None
     path=ROOT/'assets/bible/engwebp_vpl.txt'
     if not path.exists():return None
     code=CODES[NAMES.index(m[1])]; chapter=int(m[2]); verses=[]
+    announced_range=(int(m[3]),int(m[4] or m[3])) if m[3] else None
     for line in path.read_text(encoding="utf-8").splitlines():
         v=re.match(rf'{code} {chapter}:(\d+) (.+)',line)
         if v:verses.append((int(v[1]),tokens(v[2]),v[2]))
     if not verses:return None
     after=[s for s in segments if reading_time<=s['start']<=reading_time+420]
-    finish=next((s['start'] for s in after if s['start']>reading_time+40 and re.search(r'thanks (?:so much|very much)|thank you.{0,20}(?:reading|pete)|my name is|my welcome',s['text'],re.I)),reading_time+300)
+    finish=next((s['start'] for s in after if s['start']>reading_time+40 and re.search(r'thanks (?:so much|very much)|thank you.{0,30}(?:reading|reader)|my name is|my welcome',s['text'],re.I)),reading_time+300)
     after=[s for s in after if s['start']<finish]
     matches=[]
     for i,s in enumerate(after):
@@ -31,15 +32,21 @@ def infer_reading(reference,segments,reading_time):
             scored=sorted(((len(t&v)/max(1,len(t|v)),n) for n,v,_ in verses),reverse=True)
             best,n=scored[0]; margin=best-scored[1][0] if len(scored)>1 else best
             if best>=.32 and margin>=.07:
-                alternatives.append({'verse':n,'time':s['start'],'score':round(best,3),'quote':text.strip()})
+                alternatives.append({'verse':n,'time':s['start'],'end':after[j]['end'],'score':round(best,3),'quote':text.strip()})
         if alternatives: matches.append(max(alternatives,key=lambda x:x['score']))
-    if len(matches)<4:return None
+    if len(matches)<3:return None
     # An ordered run distinguishes an actual reading from random sermon quotations.
     ordered=[]
     for match in matches:
         if not ordered or match['verse']>=ordered[-1]['verse']: ordered.append(match)
-    if len(set(x['verse'] for x in ordered))<4:return None
+    distinct=set(x['verse'] for x in ordered)
+    short_announced=announced_range and 2<=announced_range[1]-announced_range[0]<=7
+    if len(distinct)<(3 if short_announced else 4):return None
     lo=ordered[0];hi=ordered[-1]
+    # A short announced range can be corroborated despite one garbled verse.
+    corroborated_range=bool(short_announced and lo['verse']==announced_range[0] and hi['verse']==announced_range[1] and sum(x['score'] for x in ordered)/len(ordered)>=.35)
+    if finish==reading_time+300:
+        finish=max(x['end'] for x in ordered)
     return {'passage':f'{m[1]} {chapter}:{lo["verse"]}–{hi["verse"]}',
         'reading_starts':lo['time'],'reading_ends':finish,'matches':ordered,
-        'confidence':'supported' if lo['score']>=.4 and hi['score']>=.4 else 'review'}
+        'confidence':'supported' if corroborated_range or (lo['score']>=.4 and hi['score']>=.4) else 'review'}

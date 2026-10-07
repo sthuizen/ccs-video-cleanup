@@ -44,6 +44,14 @@ Relevant upstream terms and sources:
 - yt-dlp: Unlicense and dependency terms — https://github.com/yt-dlp/yt-dlp/blob/master/LICENSE
 - World English Bible Protestant Edition: public domain — https://ebible.org/engwebp/copyright.htm
 
+The current Linux source setup additionally obtains the official DeepFilterNet
+v0.5.6 x86-64 musl executable directly from its upstream release. It embeds the
+DeepFilterNet3 model. The URL and SHA-256 are pinned in `ccs/audio_setup.py`;
+the executable is checked again before use and is installed under the user's
+data `.tools/bin`, with MIT/Apache-2.0 notices under `.tools/third-party-notices`.
+It is not bundled in the `.deb`. Published 1.1.0/1.2.0 installers are unchanged.
+See [research, exact artifact and licensing limits](../docs/AUDIO_RESEARCH.md).
+
 These are references, not a certification of every transitive dependency's
 redistribution requirements. If distributing an offline bundle later, review
 all exact wheel contents, bundled native libraries and model artefacts, retain

@@ -4,11 +4,87 @@ from collections import Counter
 from datetime import datetime
 from .common import read_json, write_json, status, probe, timestamp
 BOOKS='Genesis|Exodus|Leviticus|Numbers|Deuteronomy|Joshua|Judges|Ruth|(?:[123]\\s*)?Samuel|(?:[12]\\s*)?Kings|(?:[12]\\s*)?Chronicles|Ezra|Nehemiah|Esther|Job|Psalms?|Proverbs|Ecclesiastes|Song of (?:Songs|Solomon)|Isaiah|Jeremiah|Lamentations|Ezekiel|Daniel|Hosea|Joel|Amos|Obadiah|Jonah|Micah|Nahum|Habakkuk|Zephaniah|Haggai|Zechariah|Malachi|Matthew|Mark|Luke|(?:[123]\\s*)?John|Acts|Romans|[12]\\s*Corinthians|Galatians|Ephesians|Philippians|Colossians|[12]\\s*Thessalonians|[12]\\s*Timothy|Titus|Philemon|Hebrews|James|[12]\\s*Peter|Jude|Revelation'
-REF=re.compile(r'\b('+BOOKS+r')[\s,]+(?:(?:the )?beginning of\s+)?(?:chapter\s+)?(\d{1,3})(?:\s*[:.,]\s*(\d{1,3})(?:\s*[–—-]\s*(\d{1,3}))?|\s*(?:verses?|from verse)\s+(\d{1,3})(?:\s*(?:to|through|[–—-])\s*(\d{1,3}))?)?',re.I)
+REF=re.compile(r'\b('+BOOKS+r')[\s,]+(?:(?:the )?beginning of\s+)?(?:chapter\s+)?(\d{1,3})(?:\s*[:.,]\s*(\d{1,3})(?:\s*[–—-]\s*(\d{1,3}))?|\s*(?:vers(?:es?|e)?|from verse)\s+(\d{1,3})(?:\s*(?:to|through|[–—-])\s*(\d{1,3}))?)?',re.I)
 SMALL=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen']
 NUM={w:i for i,w in enumerate(SMALL)}; NUM.update({'twenty':20,'thirty':30,'forty':40,'fifty':50,'sixty':60,'seventy':70,'eighty':80,'ninety':90})
 READ=re.compile(r'(?:bible|scripture|our|the|first|second|today.s) reading|reading (?:today|this morning|from|is)|(?:turn|open|looking) (?:with me |your bibles |our bibles )?(?:to|at)|going to read|read (?:together|from)',re.I)
-CLOSE=re.compile(r'(?:we.re|we are|let.s|let us|going to|shall we|please) (?:now |all |stand (?:and |to )?)?(?:sing|stand and sing)|(?:our|the) (?:last|final|closing|next) (?:song|hymn)|(?:band|musicians|music team).{0,35}(?:come|lead)|(?:sing|stand).{0,35}(?:song|together)|(?:finish|close|conclude).{0,25}(?:sing|song)',re.I)
+CLOSE=re.compile(r"(?:we.re|we are|let.s|let us|going to|shall we|please) (?:now |all |stand (?:and |to )?)?(?:sing|stand and sing)|(?:our|the) (?:last|final|closing|next) (?:song|hymn)|(?:band|musicians|music team).{0,35}(?:come|lead)|\b(?:please |let.s |let us )?stand (?:up |and )?together\b|(?:finish|close|conclude).{0,25}(?:sing|song)",re.I)
+
+def reading_candidates(segments):
+    """Match announcements across caption fragments, then verify reference-only cues.
+
+    Captions can omit the announcement or put the verse range in a later cue.
+    A bare reference is never enough: an ordered local Bible match must follow.
+    """
+    from .scripture import infer_reading
+    candidates=[]
+    for i,segment in enumerate(segments):
+        context=' '.join(x['text'] for x in segments[i:i+4] if x['start']<=segment['end']+25)
+        references=refs(context)
+        if not references:
+            continue
+        explicit=bool(READ.search(segment['text'])) and not bool(re.search(r'keep.{0,30}open',segment['text'],re.I))
+        if not explicit and not refs(segment['text']):
+            continue
+        passages=[]
+        for reference in references:
+            # Only extend a chapter reference with an explicit nearby verse range.
+            # Stop at another book reference and exclude page numbers and sermon points.
+            if ':' not in reference:
+                for later in segments[i+1:]:
+                    if later['start']>segment['end']+120: break
+                    if refs(later['text']): break
+                    m=re.match(r'^(?:[>\s]+)?(?:vers(?:es?|e)?\s+)?(\d{1,3})\s*[–—-]\s*(\d{1,3})(?:\b|$)',normalized(later['text']))
+                    if m and int(m[1])<=int(m[2]):
+                        reference+=f':{int(m[1])}–{int(m[2])}'
+                        break
+            passages.append(reference)
+        alignments=[infer_reading(reference,segments,segment['start']) for reference in dict.fromkeys(passages)]
+        alignments=[x for x in alignments if x]
+        alignment=max(alignments,key=lambda x:(x['confidence']=='supported',len(set(m['verse'] for m in x['matches'])))) if alignments else None
+        if explicit or alignment:
+            candidates.append({'time':segment['start'],'end':segment['end'],'text':segment['text'],
+                               'passages':list(dict.fromkeys(passages)),'index':i,
+                               'kind':'announcement' if explicit else 'reference and ordered scripture',
+                               'alignment':alignment,
+                               'reader_intro':{'time':segment['start'],'quote':segment['text']} if re.search(r'(?:our|the|bible|scripture|today.s) reading(?: today| this morning)? (?:is|comes|from)',segment['text'],re.I) else None})
+    grouped=[]
+    for candidate in candidates:
+        if grouped and candidate['time']-grouped[-1]['time']<100:
+            previous=grouped[-1]
+            previous['passages']=list(dict.fromkeys(previous['passages']+candidate['passages']))
+            if candidate.get('reader_intro'): previous['reader_intro']=candidate['reader_intro']
+            if candidate['kind']=='announcement' and previous['kind']!='announcement':
+                for field in ('time','end','text','index','kind'):
+                    previous[field]=candidate[field]
+            if candidate['alignment'] and (not previous['alignment'] or
+                len(set(x['verse'] for x in candidate['alignment']['matches']))>len(set(x['verse'] for x in previous['alignment']['matches']))):
+                previous['alignment']=candidate['alignment']
+        else: grouped.append(candidate.copy())
+    return grouped
+
+
+def clamp_sections(plan):
+    """Keep inferred chapter boundaries consistent with the operator's final cut."""
+    start,end=plan.get('start'),plan.get('end')
+    if start is None or end is None or end<=start:
+        return
+    kept=[]
+    for original in plan.get('sections',[]):
+        section=original.copy()
+        for field in ('start','end'):
+            if section.get(field) is not None:
+                section[field]=max(start,min(end,section[field]))
+        if section.get('start') is not None and section.get('end') is not None and section['end']<=section['start']:
+            continue
+        kept.append(section)
+    if not kept:
+        kept=[{'name':'Selected reading and sermon','start':start,'end':end}]
+    kept[0]['start']=start
+    kept[-1]['end']=end
+    plan['sections']=kept
+    plan['sermon_points']=[point for point in plan.get('sermon_points',[]) if start<=point['start']<end]
+
 
 def normalized(text):
     text=re.sub(r'\b(first|second|third)\s+(John|Peter|Corinthians|Thessalonians|Timothy|Samuel|Kings|Chronicles)\b',lambda m:str({'first':1,'second':2,'third':3}[m[1].lower()])+' '+m[2],text,flags=re.I)
@@ -40,19 +116,9 @@ def analyze(job, video, transcript, screens):
     from .transcribe import split_gaps
     segs=split_gaps(transcript['segments']); info=read_json(job/'source.info.json')
     duration=float(probe(video)['format']['duration'])
-    readings=[]; endings=[]
-    for i,s in enumerate(segs):
-        context=' '.join(x['text'] for x in segs[max(0,i-1):i+4])
-        reference=refs(context)
-        if READ.search(s['text']) and reference:
-            readings.append({'time':s['start'],'end':s['end'],'text':s['text'],'passages':reference,'index':i})
-        if CLOSE.search(s['text']): endings.append({'time':s['start'],'end':s['end'],'text':s['text'],'index':i})
-    # Collapse consecutive announcement fragments into a single candidate.
-    grouped=[]
-    for r in readings:
-        if grouped and r['time']-grouped[-1]['time']<100:
-            grouped[-1]['passages']=list(dict.fromkeys(grouped[-1]['passages']+r['passages']))
-        else: grouped.append(r.copy())
+    grouped=reading_candidates(segs)
+    endings=[{'time':x['start'],'end':x['end'],'text':x['text'],'index':i}
+             for i,x in enumerate(segs) if CLOSE.search(x['text'])]
     pairs=[]
     for r in grouped:
         for e in endings:
@@ -87,7 +153,7 @@ def analyze(job, video, transcript, screens):
         else:
             issues.append('The sermon ending is approximate. Confirm the last words before the closing song.')
         evidence['start']={'source':'transcript','time':r['time'],'quote':r['text']}
-        evidence['end']={'source':'transcript','time':e['time'],'quote':e['text']}
+        evidence['end']={'source':'transcript','time':end,'quote':e['text'],'closing_song_cue':e['time']}
         if handoffs: evidence['end']['speaker_handoff']={'time':host['start'],'quote':host_text}
         if closing_prayers: evidence['end']['closing_prayer']={'time':prayer['end'],'quote':prayer['text']}
         # A song announcement can be part of a sermon illustration. Keep the candidate reviewable.
@@ -95,7 +161,10 @@ def analyze(job, video, transcript, screens):
         if len(pairs)>1 and pairs[1][1]['time']!=r['time'] and abs(score-pairs[1][0])<.15:
             issues.append('More than one reading/sermon interval is plausible; confirm the start and end.')
         passage=Counter(r['passages']).most_common(1)[0][0]
-        evidence['passage']={'source':'reading announcement','candidates':r['passages']}
+        if r.get('alignment'): passage=r['alignment']['passage']
+        evidence['passage']={'source':r['kind'],'candidates':r['passages'],
+                             'announcement_time':r['time'],
+                             'requires_local_verification':r['kind']=='reference and ordered scripture'}
         nearby=[x for x in screens if start-60<=x['time']<=start+300]
         slide_refs=[p for x in nearby for p in refs(x['text'])]
         if slide_refs:
@@ -103,18 +172,41 @@ def analyze(job, video, transcript, screens):
             if full: passage=Counter(full).most_common(1)[0][0]
         # Speech-recognized verse numbers can be wrong; require corroboration or flag them.
         from .scripture import infer_reading
-        alignment=infer_reading(passage,segs,r['time'])
+        alignment=r.get('alignment') or infer_reading(passage,segs,r['time'])
         if alignment and alignment['confidence']=='supported':
             passage=alignment['passage']
             start=max(r['time'],alignment['reading_starts']-.7)
             evidence['passage']['verse_matching']=alignment
             evidence['start']={'source':'spoken scripture matched to local Bible text','time':start,'quote':alignment['matches'][0]['quote']}
+            intro=r.get('reader_intro')
+            if intro and 0<=alignment['reading_starts']-intro['time']<=30:
+                start=max(0,intro['time']-.7)
+                evidence['start']={'source':'reader announcement followed by matched scripture','time':start,
+                                   'quote':intro['quote'],'scripture_match_time':alignment['reading_starts']}
+                evidence['passage']['announcement_time']=intro['time']
         if passage not in slide_refs and not (alignment and alignment['confidence']=='supported'):
             issues.append('Confirm the Bible passage; it is recognized from speech but not corroborated by a legible slide.')
         if len(grouped)>1 and len(pairs)>1:
             issues.append('Multiple Bible readings were detected; confirm which belongs to the sermon.')
     else:
-        issues.append('No unambiguous reading-to-sermon interval found. Supply start and end using the timestamped transcript and source video.')
+        if grouped:
+            strongest=max(grouped,key=lambda x:(bool(x.get('alignment')),len(x.get('alignment',{}).get('matches',[]) if x.get('alignment') else [])))
+            alignment=strongest.get('alignment')
+            passage=alignment['passage'] if alignment else strongest['passages'][0]
+            start=max(0,(alignment['reading_starts']-.7) if alignment else strongest['time']-1)
+            evidence['start']={'source':'reading candidate; ending unresolved','time':start,'quote':strongest['text']}
+            intro=strongest.get('reader_intro')
+            if alignment and intro and 0<=alignment['reading_starts']-intro['time']<=30:
+                start=max(0,intro['time']-.7)
+                evidence['start']={'source':'reader announcement; ending unresolved','time':start,'quote':intro['quote']}
+            evidence['passage']={'source':'reading evidence','candidates':strongest['passages'],
+                                 'announcement_time':strongest['time'],
+                                 'requires_local_verification':strongest['kind']=='reference and ordered scripture'}
+            if alignment: evidence['passage']['verse_matching']=alignment
+        if start is not None:
+            issues.append('No reliable sermon ending found. Confirm the end using the timestamped transcript and source video.')
+        else:
+            issues.append('No unambiguous reading-to-sermon interval found. Supply start and end using the timestamped transcript and source video.')
     date_candidates=[]
     for x in screens:
         date_candidates.extend(dates(x['text']))
@@ -171,5 +263,6 @@ def analyze(job, video, transcript, screens):
         for k in ('start','end','passage','title','date'): 
             if overrides.get(k) is not None: plan[k]=overrides[k]
         plan['confirmed']=overrides.get('confirmed',False)
+    clamp_sections(plan)
     write_json(job/'plan.json',plan)
     return plan

@@ -1,0 +1,137 @@
+{
+  "date": "2026-10-07",
+  "scope": "original Linux x86-64 installation; released Windows/Debian installers unchanged",
+  "tests_passed": 50,
+  "human_listening_confirmed": false,
+  "complete_videos": [
+    {
+      "service": "2026-09-06",
+      "job": "wrFPGvIIEWk",
+      "passage": "Acts 2: 42-47",
+      "saved_cut": [
+        2042.0,
+        3730.0
+      ],
+      "automatic_cut": [
+        2045.1899999999998,
+        3728.59
+      ],
+      "duration_seconds": 1693.021354,
+      "audio_lufs": -20.26,
+      "true_peak_dbtp": -1.9,
+      "full_decode": "passed",
+      "source_identity_and_manual_cut_unchanged": true,
+      "original_caches_unchanged": {
+        "transcript.json": true,
+        "review.json": true,
+        "source.info.json": true
+      },
+      "video_payload_identical": true,
+      "audio_master_source": "single AAC encode from enhanced PCM with five-second silence"
+    },
+    {
+      "service": "2026-09-20",
+      "job": "-jFmoQpDCac",
+      "passage": "Romans 1:8\u201317",
+      "saved_cut": [
+        2665.94,
+        4983.1
+      ],
+      "automatic_cut": [
+        2641.3790000000004,
+        4983.1
+      ],
+      "duration_seconds": 2322.221354,
+      "audio_lufs": -20.4,
+      "true_peak_dbtp": -1.41,
+      "full_decode": "passed",
+      "source_identity_and_manual_cut_unchanged": true,
+      "original_caches_unchanged": {
+        "transcript.json": true,
+        "review.json": true,
+        "source.info.json": true
+      },
+      "video_payload_identical": true,
+      "audio_master_source": "single AAC encode from enhanced PCM with five-second silence"
+    },
+    {
+      "service": "2026-10-04",
+      "job": "c4qtGGSgBQI",
+      "passage": "Romans 2:1\u201316",
+      "saved_cut": [
+        2301.0,
+        4574.0
+      ],
+      "automatic_cut": [
+        2300.8500000000004,
+        4574.12
+      ],
+      "duration_seconds": 2278.021354,
+      "audio_lufs": -20.49,
+      "true_peak_dbtp": -1.48,
+      "full_decode": "passed",
+      "source_identity_and_manual_cut_unchanged": true,
+      "original_caches_unchanged": {
+        "transcript.json": true,
+        "review.json": true,
+        "source.info.json": true
+      },
+      "video_payload_identical": true,
+      "audio_master_source": "single AAC encode from enhanced PCM with five-second silence"
+    }
+  ],
+  "matched_voice_excerpts": [
+    {
+      "service": "2026-09-06",
+      "start": 2600.0,
+      "duration": 60.0,
+      "mask": "source top 40% and bottom 15% of 10 ms energy frames; proxies, not clean speech/noise labels",
+      "background_seconds": 9.0,
+      "previous_quiet_background_dbfs": -70.50859796816351,
+      "new_quiet_background_dbfs": -83.90178242613035,
+      "new_minus_previous_db": -13.39318445796684,
+      "all_pause_new_minus_previous_db": -13.39318445796684,
+      "previous_delay_seconds": 0.0474375,
+      "new_delay_seconds": 0.0011875
+    },
+    {
+      "service": "2026-09-20",
+      "start": 3000.0,
+      "duration": 90.0,
+      "mask": "source top 40% and bottom 15% of 10 ms energy frames; proxies, not clean speech/noise labels",
+      "background_seconds": 13.5,
+      "previous_quiet_background_dbfs": -61.12632294585862,
+      "new_quiet_background_dbfs": -73.01252168051853,
+      "new_minus_previous_db": -11.886198734659914,
+      "all_pause_new_minus_previous_db": -11.886198734659914,
+      "previous_delay_seconds": 0.0463125,
+      "new_delay_seconds": 0.0
+    },
+    {
+      "service": "2026-10-04",
+      "start": 2600,
+      "duration": 90.0,
+      "mask": "cached source word centres (middle 80%) and gaps >0.5 seconds with 150 ms margins; pauses may contain crowd sound",
+      "background_seconds": 13.739625,
+      "previous_quiet_background_dbfs": -53.24709239869697,
+      "new_quiet_background_dbfs": -60.051652839380864,
+      "new_minus_previous_db": -6.804560440683893,
+      "all_pause_new_minus_previous_db": 1.1604964439861618,
+      "previous_delay_seconds": 0.0463125,
+      "new_delay_seconds": 0.0
+    },
+    {
+      "service": "2026-10-04",
+      "start": 4510,
+      "duration": 60.0,
+      "mask": "cached source word centres (middle 80%) and gaps >0.5 seconds with 150 ms margins; pauses may contain crowd sound",
+      "background_seconds": 9.26975,
+      "previous_quiet_background_dbfs": -54.17733681935345,
+      "new_quiet_background_dbfs": -58.1902086902113,
+      "new_minus_previous_db": -4.01287187085785,
+      "all_pause_new_minus_previous_db": -0.2510196319182967,
+      "previous_delay_seconds": 0.0463125,
+      "new_delay_seconds": 0.0
+    }
+  ]
+}

@@ -43,9 +43,11 @@ There is no publishing or upload step. See the [operator guide](docs/USER_GUIDE.
 
 ## What runs locally?
 
-Speech recognition uses faster-whisper `small.en` on the CPU when usable English captions are unavailable. Slide reading uses RapidOCR. Passage matching and selection rules are conventional code; audio cleanup and stabilization use FFmpeg. **There are no cloud AI API calls, API keys or subscriptions.** Installation contacts dependency/model providers; YouTube processing contacts YouTube and may use locally read browser cookies. Cached local recordings and models support offline processing.
+Speech recognition uses faster-whisper `small.en` on the CPU when usable English captions are unavailable. The current Linux source also checks short audio excerpts when captions omit reading or closing evidence, and uses a separately downloaded local DeepFilterNet3 model for speech cleanup. Slide reading uses RapidOCR. Passage matching and selection rules are conventional code; FFmpeg handles further audio filtering, constant playback gain and stabilization. **There are no cloud AI API calls, API keys or subscriptions.** Installation contacts dependency/model providers; YouTube processing contacts YouTube and may use locally read browser cookies. Cached local recordings and models support offline processing.
 
 The app preserves the source and analysis evidence. It checks stereo phase before mixing so opposed channels do not cancel the voice. It asks for uncertain metadata instead of inventing an official title or treating an upload date as the service date. These checks improve reliability, but the operator still needs to check the result.
+
+The October 2026 Linux audio/detection improvements pass 50 tests and complete-file checks on three real recordings in the original installation; operator listening confirmation is pending. The published 1.1.0 Debian and 1.2.0 Windows installers retain their original contents. See [complete Linux validation and listening comparisons](docs/validation/linux-audio-detection-2026-10-07.md), [audio research and measured limits](docs/AUDIO_RESEARCH.md) and [real-recording detection validation](docs/DETECTION_VALIDATION.md). Speech-like crowd noise and reverberation can remain. For a source checkout, `.venv/bin/python -m ccs.audio_setup` installs the verified Linux x64 enhancer without reinstalling the app or changing the service. Its method and checksum are recorded with each rendered job.
 
 ## Documentation
 

@@ -1,7 +1,7 @@
 import argparse
 from .common import read_json, write_json, status, seconds, exclusive
 from .acquire import job_for, acquire, video_path
-from .transcribe import transcribe
+from .transcribe import transcribe, refine_transcript
 from .ocr import scan
 from .analyze import analyze
 from .render import render
@@ -12,6 +12,10 @@ def process(source,cookies=None,analyze_only=False):
     video=acquire(job,source,cookies)
     transcript=transcribe(job,video)
     initial=analyze(job,video,transcript,[])
+    checked=refine_transcript(job,video,transcript,initial)
+    if checked is not transcript:
+        transcript=checked
+        initial=analyze(job,video,transcript,[])
     needs_screen=any('title' in issue.lower() or 'passage' in issue.lower() for issue in initial['issues'])
     screens=scan(job,video) if needs_screen else []
     plan=analyze(job,video,transcript,screens)

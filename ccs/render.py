@@ -4,8 +4,8 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 from .common import ROOT, BIN, LOGO, command, probe, status, write_json, read_json, exclusive, process_options
 from .acquire import video_path
+from .audio import FILTER as CLEAN, profile as audio_profile, prepare as prepare_audio
 INTRO_SECONDS=5
-CLEAN='highpass=f=75,lowpass=f=11000,afftdn=nf=-30:nr=10:tn=1,equalizer=f=300:t=q:w=1:g=-1.5,equalizer=f=3000:t=q:w=1:g=1.5,acompressor=threshold=0.125:ratio=2:attack=15:release=200:makeup=1'
 
 def validate(plan):
     for k in ('start','end','title','passage','date'):
@@ -78,20 +78,25 @@ def prepare_sermon(job, plan, stabilize=True):
     width=v['width']//2*2; height=v['height']//2*2
     rate=v.get('avg_frame_rate','30/1'); num,den=map(int,rate.split('/')); fps=num/den if den else 30
     fps=round(fps,3)
-    settings={'start':start,'duration':duration,'source':str(video),'source_size':video.stat().st_size,'source_modified':video.stat().st_mtime_ns,'clean_filter':CLEAN,'stabilize':stabilize,'stabilization_version':3,'width':width,'height':height,'fps':fps}
-    if (job/'media-settings.json').exists() and (job/'sermon.mp4').exists() and read_json(job/'media-settings.json')==settings:
+    settings={'start':start,'duration':duration,'source':str(video),'source_size':video.stat().st_size,'source_modified':video.stat().st_mtime_ns,'clean_filter':CLEAN,'audio_profile':audio_profile(),'audio_encoder_input':'s32','stabilize':stabilize,'stabilization_version':3,'width':width,'height':height,'fps':fps}
+    if (job/'media-settings.json').exists() and (job/'sermon.mp4').exists() and (job/'cleaned-audio.wav').exists() and (job/'audio-settings.json').exists() and read_json(job/'media-settings.json')==settings:
         return settings
-    mono=mono_filter(job,video,start,duration); audio=mono+','+CLEAN
-    status(job,'Cleaning audio','Measuring cleaned audio for loudness normalization',total_seconds=duration)
-    command([BIN/'ffmpeg','-y','-ss',str(start),'-t',str(duration),'-i',video,'-vn','-af',audio+',loudnorm=I=-18:TP=-1.5:LRA=11:print_format=json','-f','null','-'],job,'loudness-measure')
-    log=(job/'loudness-measure.log').read_text(encoding='utf-8', errors='replace')
-    match=re.findall(r'\{\s*"input_i".*?\}',log,re.S)
-    if not match: raise RuntimeError('FFmpeg did not return loudness measurements.')
-    measured=json.loads(match[-1]); write_json(job/'loudness.json',measured)
-    if measured['input_i']=='-inf': raise ValueError('Selected audio is silent; check the cut points.')
-    norm=(f"loudnorm=I=-18:TP=-1.5:LRA=11:measured_I={measured['input_i']}:"
-          f"measured_TP={measured['input_tp']}:measured_LRA={measured['input_lra']}:"
-          f"measured_thresh={measured['input_thresh']}:offset={measured['target_offset']}:linear=true")
+    mono=mono_filter(job,video,start,duration)
+    audio,norm=prepare_audio(job,video,start,duration,mono,settings['audio_profile'])
+    # Quantize inaudible near-zero float residue before AAC. A full-length
+    # near-silence decode/re-encode stalled; S32 completed that reproduction.
+    # The precise codec defect is unproven. S32 retains ample source precision.
+    norm+=',aformat=sample_fmts=s32'
+    old_settings=read_json(job/'media-settings.json') if (job/'media-settings.json').exists() else {}
+    video_keys=('start','duration','source','source_size','source_modified','stabilize','stabilization_version','width','height','fps')
+    reuse_video=(job/'sermon.mp4').is_file() and all(old_settings.get(k)==settings[k] for k in video_keys)
+    if reuse_video:
+        status(job,'Rendering','Replacing audio while preserving the already stabilized video',total_seconds=duration,log_file='render.log')
+        temporary=job/'sermon.tmp.mp4'
+        command([BIN/'ffmpeg','-y','-i',job/'sermon.mp4','-i',audio,'-map','0:v:0','-map','1:a:0','-c:v','copy','-af',norm,'-c:a','aac','-b:a','128k','-ar','48000','-ac','1','-t',str(duration),'-movflags','+faststart',temporary],job,'render')
+        temporary.replace(job/'sermon.mp4')
+        write_json(job/'media-settings.json',settings)
+        return settings
     # Relative transform filename avoids FFmpeg's platform-specific filter path escaping.
     transform=job/'transforms.trf'
     vf=f'fps={fps},format=yuv420p'
@@ -106,7 +111,7 @@ def prepare_sermon(job, plan, stabilize=True):
         vf+=',vidstabtransform=input=transforms.trf:smoothing=15:optalgo=gauss:optzoom=0:zoom=3:maxshift=12:maxangle=0.01:crop=black:interpol=bilinear'
     status(job,'Rendering','Encoding the sermon with cleaned mono audio',total_seconds=duration,log_file='render.log')
     with (job/'render.log').open('w') as log:
-        subprocess.run([str(BIN/'ffmpeg'),'-y','-threads','6','-ss',str(start),'-t',str(duration),'-i',str(video),'-map','0:v:0','-map','0:a:0','-vf',vf,'-af',audio+','+norm,'-c:v','libx264','-preset','veryfast','-crf','19','-threads','6','-c:a','aac','-b:a','128k','-ar','48000','-ac','1','-movflags','+faststart','sermon.mp4'],cwd=job,stdout=log,stderr=log,check=True, **process_options())
+        subprocess.run([str(BIN/'ffmpeg'),'-y','-threads','6','-ss',str(start),'-t',str(duration),'-i',str(video),'-i',str(audio),'-map','0:v:0','-map','1:a:0','-vf',vf,'-af',norm,'-c:v','libx264','-preset','veryfast','-crf','19','-threads','6','-c:a','aac','-b:a','128k','-ar','48000','-ac','1','-movflags','+faststart','sermon.mp4'],cwd=job,stdout=log,stderr=log,check=True, **process_options())
     write_json(job/'media-settings.json',settings)
     return settings
 
@@ -120,7 +125,8 @@ def render(job, stabilize=True):
     status(job,'Creating intro','Creating the church title card',total_seconds=INTRO_SECONDS)
     card(job,plan,width,height)
     command([BIN/'ffmpeg','-y','-loop','1','-framerate',str(fps),'-i',job/'intro.png','-f','lavfi','-i','anullsrc=r=48000:cl=mono','-t',str(INTRO_SECONDS),'-c:v','libx264','-preset','veryfast','-crf','19','-pix_fmt','yuv420p','-threads','6','-c:a','aac','-b:a','128k','-ar','48000','-ac','1',job/'intro.mp4'],job,'intro-encode')
-    chapter_starts=[(0,'Intro'),(INTRO_SECONDS,'Bible reading')]
+    first_section=next(iter(plan.get('sections',[])),{}).get('name','Bible reading')
+    chapter_starts=[(0,'Intro'),(INTRO_SECONDS,first_section)]
     for section in plan.get('sections',[])[1:]:
         if section.get('start') is not None: chapter_starts.append((INTRO_SECONDS+float(section['start'])-float(plan['start']),section['name']))
     for section in plan.get('sermon_points',[]):
@@ -136,14 +142,22 @@ def render(job, stabilize=True):
     write_json(job/'sermon-details.json',{'title':plan['title'],'date':plan['date'],'passage':plan['passage'],'original_cut':{'start':plan['start'],'end':plan['end']},'chapters':[{'time':x,'title':t} for x,t in chapter_starts]})
     (job/'concat.txt').write_text("file 'intro.mp4'\nfile 'sermon.mp4'\n")
     status(job,'Joining intro','Adding the five-second church intro card',total_seconds=duration+INTRO_SECONDS)
-    # Re-encode audio across joins to prevent AAC encoder delay and timestamp overlap.
-    command([BIN/'ffmpeg','-y','-f','concat','-safe','1','-i',job/'concat.txt','-i',job/'chapters.ffmeta','-map_metadata','1','-map_chapters','1','-map','0:v:0','-map','0:a:0','-c:v','copy','-c:a','aac','-b:a','128k','-ar','48000','-ac','1','-movflags','+faststart',job/'finished.mp4'],job,'concat')
+    # Encode the enhanced PCM once for the master, with exactly five seconds of
+    # initial silence. Avoid a second AAC decode/encode across a concat boundary,
+    # its extra codec delay and pathological near-silence encoder state.
+    normalized=read_json(job/'audio-settings.json')['normalization_filter']
+    joined_audio=normalized+f',adelay={INTRO_SECONDS*1000}:all=1,apad,aformat=sample_fmts=s32'
+    command([BIN/'ffmpeg','-y','-f','concat','-safe','1','-i',job/'concat.txt','-i',job/'cleaned-audio.wav','-i',job/'chapters.ffmeta','-map_metadata','2','-map_chapters','2','-map','0:v:0','-map','1:a:0','-af',joined_audio,'-t',str(duration+INTRO_SECONDS),'-c:v','copy','-c:a','aac','-b:a','128k','-ar','48000','-ac','1','-movflags','+faststart',job/'finished.mp4'],job,'concat')
     check=probe(job/'finished.mp4'); a=next(x for x in check['streams'] if x['codec_type']=='audio')
     actual=float(check['format']['duration']); expected=duration+INTRO_SECONDS
     if a['channels']!=1 or abs(actual-expected)>.5: raise RuntimeError('Output duration or mono validation failed.')
     status(job,'Checking video','Decoding the complete video to check the finished file',total_seconds=duration+INTRO_SECONDS)
-    command([BIN/'ffmpeg','-stats','-i',job/'finished.mp4','-f','null','-'],job,'decode-check')
-    write_json(job/'validation.json',{'audio_channels':a['channels'],'duration':actual,'expected_duration':expected,'full_decode':'passed','stabilized':stabilize,'plan':plan})
+    command([BIN/'ffmpeg','-stats','-i',job/'finished.mp4','-af','loudnorm=I=-20:TP=-2:LRA=50:print_format=json','-f','null','-'],job,'decode-check')
+    measured=re.findall(r'\{\s*"input_i".*?\}',(job/'decode-check.log').read_text(encoding='utf-8',errors='replace'),re.S)
+    if not measured: raise RuntimeError('The finished audio measurement is missing.')
+    audio_measurement=json.loads(measured[-1])
+    if float(audio_measurement['input_tp'])>-.5: raise RuntimeError('The encoded audio exceeds the safe true-peak limit; inspect audio settings.')
+    write_json(job/'validation.json',{'audio_channels':a['channels'],'duration':actual,'expected_duration':expected,'full_decode':'passed','stabilized':stabilize,'audio_profile':settings['audio_profile'],'audio_encoder_input':'s32','audio_master_source':'single AAC encode from enhanced PCM with five-second silence','audio_lufs':float(audio_measurement['input_i']),'audio_true_peak_db':float(audio_measurement['input_tp']),'plan':plan})
     from .preview import prepare
     prepare(job)
     status(job,'Finished',str(job/'finished.mp4'))
