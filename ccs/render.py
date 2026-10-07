@@ -145,9 +145,11 @@ def render(job, stabilize=True):
     # Encode the enhanced PCM once for the master, with exactly five seconds of
     # initial silence. Avoid a second AAC decode/encode across a concat boundary,
     # its extra codec delay and pathological near-silence encoder state.
+    # Retain section evidence in local metadata, but omit player chapter labels.
+    # An uncertain transition can otherwise label an entire sermon 'Bible reading'.
     normalized=read_json(job/'audio-settings.json')['normalization_filter']
     joined_audio=normalized+f',adelay={INTRO_SECONDS*1000}:all=1,apad,aformat=sample_fmts=s32'
-    command([BIN/'ffmpeg','-y','-f','concat','-safe','1','-i',job/'concat.txt','-i',job/'cleaned-audio.wav','-i',job/'chapters.ffmeta','-map_metadata','2','-map_chapters','2','-map','0:v:0','-map','1:a:0','-af',joined_audio,'-t',str(duration+INTRO_SECONDS),'-c:v','copy','-c:a','aac','-b:a','128k','-ar','48000','-ac','1','-movflags','+faststart',job/'finished.mp4'],job,'concat')
+    command([BIN/'ffmpeg','-y','-f','concat','-safe','1','-i',job/'concat.txt','-i',job/'cleaned-audio.wav','-i',job/'chapters.ffmeta','-map_metadata','2','-map_chapters','-1','-map','0:v:0','-map','1:a:0','-af',joined_audio,'-t',str(duration+INTRO_SECONDS),'-c:v','copy','-c:a','aac','-b:a','128k','-ar','48000','-ac','1','-movflags','+faststart',job/'finished.mp4'],job,'concat')
     check=probe(job/'finished.mp4'); a=next(x for x in check['streams'] if x['codec_type']=='audio')
     actual=float(check['format']['duration']); expected=duration+INTRO_SECONDS
     if a['channels']!=1 or abs(actual-expected)>.5: raise RuntimeError('Output duration or mono validation failed.')

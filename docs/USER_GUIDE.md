@@ -34,7 +34,7 @@ Choose **Save details and create video** after checking the fields. A clearly su
 
 ## Check and collect the result
 
-Watch the intro, first spoken words and closing words. Confirm date/title/passage, intelligible audio and sensible framing. The five-second intro precedes the selected reading/sermon. Chapter markers are included when supported by evidence; uncertain sermon points may have no chapter.
+Watch the intro, first spoken words and closing words. Confirm date/title/passage, intelligible audio and sensible framing. The five-second intro precedes the selected reading/sermon. Player chapter labels are disabled, so scrubbing does not display inferred reading or sermon labels.
 
 The download is `finished.mp4`, the full-quality H.264/mono AAC master. Browser playback uses a separate preview at up to 720p, with the finished audio copied intact. Preview softness does not mean the downloaded master has been reduced to preview quality.
 

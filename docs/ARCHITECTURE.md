@@ -21,7 +21,7 @@ flowchart TD
     K --> L[Local finished.mp4]
 ```
 
-`ccs/cli.py` coordinates the pipeline. `acquire.py` handles yt-dlp, source paths and job IDs. `transcribe.py` selects usable English captions or CPU faster-whisper, with channel analysis before mono conversion, and checks bounded audio excerpts when caption evidence is deficient. `ocr.py` reads relevant slide evidence. `analyze.py` combines transcript/slide evidence and Bible matching. `audio.py` prepares and caches phase-safe enhanced audio; `audio_setup.py` verifies its independently downloaded native tool. `render.py` builds the card, cuts/stabilizes media, writes chapters and validates outputs. `web.py` serves the interface in `index.html`; `common.py` supplies paths, JSON/status writing, commands and the shared processing lock.
+`ccs/cli.py` coordinates the pipeline. `acquire.py` handles yt-dlp, source paths and job IDs. `transcribe.py` selects usable English captions or CPU faster-whisper, with channel analysis before mono conversion, and checks bounded audio excerpts when caption evidence is deficient. `ocr.py` reads relevant slide evidence. `analyze.py` combines transcript/slide evidence and Bible matching. `audio.py` prepares and caches phase-safe enhanced audio; `audio_setup.py` verifies its independently downloaded native tool. `render.py` builds the card, cuts/stabilizes media, retains section metadata and validates outputs. `web.py` serves the interface in `index.html`; `common.py` supplies paths, JSON/status writing, commands and the shared processing lock.
 
 ## AI and deterministic work
 
@@ -44,7 +44,7 @@ The special opposed-stereo source makes the phase check essential. Do not simpli
 | `status.json`, stage `.log` files | Progress, timing and diagnostics |
 | `sermon.mp4`, `media-settings.json`, `transforms.trf`, `measurement-settings.json` | Processed sermon, rendering cache settings and stabilization/audio evidence |
 | `intro.png`, `intro.mp4` | Generated introduction |
-| `sermon-details.json`, `chapters.ffmeta` | Result metadata and chapter construction |
+| `sermon-details.json`, `chapters.ffmeta` | Result metadata and retained section evidence; chapters are not embedded in playback files |
 | `finished.mp4`, `validation.json` | Full-quality master and validation |
 | `preview.mp4`, `preview-settings.json`, `preview-validation.json` | Browser-compatible derivative and its checks |
 

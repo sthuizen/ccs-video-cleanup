@@ -43,11 +43,11 @@ class Media(unittest.TestCase):
             self.assertLess(abs(lag)/48000,.008,'Master must not accumulate a second AAC join delay')
             from ccs.common import probe
             chapters=probe(j/'finished.mp4')['chapters']
-            self.assertEqual([c['tags']['title'] for c in chapters],['Intro','Bible reading','Sermon'])
-            self.assertLessEqual(float(chapters[-1]['end_time']),11.1)
+            self.assertEqual(chapters, [], 'Scrubbing must not display inferred section labels')
             from ccs.preview import ready
             self.assertTrue(ready(j))
             preview=probe(j/'preview.mp4')
+            self.assertEqual(preview.get('chapters', []), [])
             pv=next(s for s in preview['streams'] if s['codec_type']=='video')
             self.assertEqual((pv['width'],pv['height']),(640,360))
             self.assertEqual(pv['profile'],'Constrained Baseline')
