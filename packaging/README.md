@@ -1,10 +1,10 @@
 # Ubuntu / Debian installer
 
-Version 1.1 is an application-only amd64 package targeting Ubuntu 24.04 LTS and Debian
+Version 1.3 is an application-only amd64 package targeting Ubuntu 24.04 LTS and Debian
 13. Older releases do not provide all required Python/PyAV versions. Other
 releases need compatible binary wheels and separate validation. APT
 installs standard dependencies; the user's first-run setup downloads specialist
-AI packages, the downloader, Deno and speech model. Internet access is required
+AI packages, the downloader, Deno, speech model and verified native speech enhancer. Internet access is required
 for installation/setup and YouTube downloads. Speech recognition and OCR then
 run locally without cloud AI, API keys or subscriptions.
 
@@ -13,7 +13,7 @@ run locally without cloud AI, API keys or subscriptions.
 Ubuntu needs the `universe` repository enabled. From the installer folder:
 
 ```bash
-sudo apt install ./ccs-video-cleanup_1.1.0_amd64.deb
+sudo apt install ./ccs-video-cleanup_1.3.0_amd64.deb
 ccs-video-cleanup setup
 ```
 
@@ -76,7 +76,7 @@ service before installing 1.1. User jobs stay in the same data directory:
 
 ```bash
 systemctl --user stop ccs-video-cleanup-packaged.service
-sudo apt install ./ccs-video-cleanup_1.1.0_amd64.deb
+sudo apt install ./ccs-video-cleanup_1.3.0_amd64.deb
 ccs-video-cleanup setup
 ```
 
@@ -94,7 +94,7 @@ only when you no longer need its contents.
 ## Rebuild
 
 ```bash
-python3 packaging/build_deb.py --version 1.1.0
+python3 packaging/build_deb.py --version 1.3.0
 ```
 
 Requires `dpkg-deb`; no local venv, binary toolchain or model cache is needed.
@@ -102,3 +102,7 @@ The builder creates `dist/*.deb` and a SHA-256 checksum without installing it
 or touching the running app. Before releasing changes, run the repository's
 unit tests and verify the package/setup in the target distributions, including
 an actual synthetic video render and offline model loading.
+
+## Version 1.3.0 audio and review
+
+The native DeepFilterNet3 enhancer is downloaded directly from upstream, verified and installed in the user data directory. The approved settings match the original Linux installation: 20 dB maximum suppression, gentle filtering and constant gain targeting -20 LUFS. First setup requires internet; enhancement then runs locally. Improved caption checks, passage/boundary evidence and manual review are included. Player chapter labels are disabled. Install the new package and rerun `ccs-video-cleanup setup` as your desktop user, with processing idle; jobs and model caches are retained.

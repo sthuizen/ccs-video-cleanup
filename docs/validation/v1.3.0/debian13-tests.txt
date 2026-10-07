@@ -1,0 +1,87 @@
+test_compound_spoken_numbers (test_analysis.Analysis.test_compound_spoken_numbers) ... ok
+test_fragmented_caption_reference (test_analysis.Analysis.test_fragmented_caption_reference) ... ok
+test_keep_open_after_reader_is_not_second_reading (test_analysis.Analysis.test_keep_open_after_reader_is_not_second_reading) ... ok
+test_local_verse_range (test_analysis.Analysis.test_local_verse_range) ... ok
+test_passage_survives_unresolved_ending (test_analysis.Analysis.test_passage_survives_unresolved_ending) ... ok
+test_reader_introduction_preserved_but_long_host_lead_in_excluded (test_analysis.Analysis.test_reader_introduction_preserved_but_long_host_lead_in_excluded) ... ok
+test_reading_announcement (test_analysis.Analysis.test_reading_announcement) ... ok
+test_recovered_announcement_replaces_bare_reference (test_analysis.Analysis.test_recovered_announcement_replaces_bare_reference) ... ok
+test_reference_and_detached_range_need_ordered_scripture (test_analysis.Analysis.test_reference_and_detached_range_need_ordered_scripture) ... ok
+test_reviewed_cut_clamps_sections_and_points (test_analysis.Analysis.test_reviewed_cut_clamps_sections_and_points) ... ok
+test_saved_review_controls_cut_and_chapters (test_analysis.Analysis.test_saved_review_controls_cut_and_chapters) ... ok
+test_sermon_illustration_is_not_closing_hymn (test_analysis.Analysis.test_sermon_illustration_is_not_closing_hymn) ... ok
+test_unknown_transition_is_not_invented_by_cut_clamping (test_analysis.Analysis.test_unknown_transition_is_not_invented_by_cut_clamping) ... ok
+test_word_gap_preserves_handoff (test_analysis.Analysis.test_word_gap_preserves_handoff) ... ok
+test_constant_gain_does_not_raise_pauses_relative_to_voice (test_audio.AudioSignalTests.test_constant_gain_does_not_raise_pauses_relative_to_voice) ... ok
+test_default_enhancer_integrity_failure_is_detected_before_execution (test_audio.AudioSignalTests.test_default_enhancer_integrity_failure_is_detected_before_execution) ... ok
+test_failed_prepare_cannot_stamp_success_or_replace_cache (test_audio.AudioSignalTests.test_failed_prepare_cannot_stamp_success_or_replace_cache) ... Cleaning audio: Extracting the checked voice channel
+ok
+test_filtered_voice_envelope_has_no_remaining_fft_delay (test_audio.AudioSignalTests.test_filtered_voice_envelope_has_no_remaining_fft_delay) ... Cleaning audio: Extracting the checked voice channel
+Cleaning audio: Measuring speech for constant playback gain
+ok
+test_gain_is_capped_and_silence_is_rejected (test_audio.AudioSignalTests.test_gain_is_capped_and_silence_is_rejected) ... ok
+test_installed_model_stays_local_and_returns_exact_duration (test_audio.AudioSignalTests.test_installed_model_stays_local_and_returns_exact_duration) ... Cleaning audio: Extracting the checked voice channel
+Enhancing voice: Reducing background noise locally; suppression is limited to protect speech
+Cleaning audio: Measuring speech for constant playback gain
+ok
+test_soft_speech_and_end_of_cut_are_preserved (test_audio.AudioSignalTests.test_soft_speech_and_end_of_cut_are_preserved) ... Cleaning audio: Extracting the checked voice channel
+Cleaning audio: Measuring speech for constant playback gain
+ok
+test_bad_download_preserves_existing_tool (test_audio_setup.EnhancerSetup.test_bad_download_preserves_existing_tool) ... ok
+test_verified_tool_repairs_notices_without_downloading_again (test_audio_setup.EnhancerSetup.test_verified_tool_repairs_notices_without_downloading_again) ... ok
+test_windows_installs_the_pinned_native_executable (test_audio_setup.EnhancerSetup.test_windows_installs_the_pinned_native_executable) ... ok
+test_caption_rate_limit_retries_without_captions (test_download_access.DownloadAccess.test_caption_rate_limit_retries_without_captions) ... Downloading: Downloading original video, metadata and any English captions
+ok
+test_sign_in_block_does_not_immediately_retry (test_download_access.DownloadAccess.test_sign_in_block_does_not_immediately_retry) ... Downloading: Downloading original video, metadata and any English captions
+ok
+test_video_rate_limit_does_not_retry (test_download_access.DownloadAccess.test_video_rate_limit_does_not_retry) ... Downloading: Downloading original video, metadata and any English captions
+ok
+test_bitrate_takes_priority_over_resolution_and_codec (test_download_quality.DownloadQuality.test_bitrate_takes_priority_over_resolution_and_codec) ... Downloading: Downloading original video, metadata and any English captions
+ok
+test_combined_stream_fallback (test_download_quality.DownloadQuality.test_combined_stream_fallback) ... Downloading: Downloading original video, metadata and any English captions
+ok
+test_uncapped_video_and_highest_audio_bitrate (test_download_quality.DownloadQuality.test_uncapped_video_and_highest_audio_bitrate) ... Downloading: Downloading original video, metadata and any English captions
+ok
+test_competing_process_and_release (test_locking.FileLock.test_competing_process_and_release) ... ok
+test_exception_releases_lock (test_locking.FileLock.test_exception_releases_lock) ... ok
+test_opposed_stereo_and_full_render (test_pipeline.Media.test_opposed_stereo_and_full_render) ... Cleaning audio: Extracting the checked voice channel
+Enhancing voice: Reducing background noise locally; suppression is limited to protect speech
+Cleaning audio: Measuring speech for constant playback gain
+Measuring camera movement: Conservative two-pass stabilization; modest 3% crop
+Rendering: Encoding the sermon with cleaned mono audio
+Creating intro: Creating the church title card
+Joining intro: Adding the five-second church intro card
+Checking video: Decoding the complete video to check the finished file
+Preparing preview: Creating a lighter browser playback copy; full-quality download is ready
+Finished: /tmp/ccs-test-0d31b5r4/finished.mp4
+Finished: /tmp/ccs-test-0d31b5r4/finished.mp4
+ok
+test_invalid_cut (test_pipeline.Rules.test_invalid_cut) ... ok
+test_service_date (test_pipeline.Rules.test_service_date) ... ok
+test_spoken_reference (test_pipeline.Rules.test_spoken_reference) ... ok
+test_download_eta_is_current_file_not_whole_job (test_progress.Progress.test_download_eta_is_current_file_not_whole_job) ... ok
+test_ffmpeg_percentage_and_eta (test_progress.Progress.test_ffmpeg_percentage_and_eta) ... ok
+test_unknown_work_has_no_invented_percentage (test_progress.Progress.test_unknown_work_has_no_invented_percentage) ... ok
+test_updates_preserve_step_timer_and_history (test_progress.Progress.test_updates_preserve_step_timer_and_history) ... Transcribing: Starting
+Transcribing: Continuing
+Reading slides: Starting
+ok
+test_waiting_timer_stops_and_error_does_not_complete_step (test_progress.Progress.test_waiting_timer_stops_and_error_does_not_complete_step) ... Downloading: Starting
+Error: Failed
+ok
+test_media_for_previous_review_is_not_offered (test_readiness.Readiness.test_media_for_previous_review_is_not_offered) ... ok
+test_checks_are_bounded_and_prioritize_reading (test_transcription_refinement.TranscriptionRefinement.test_checks_are_bounded_and_prioritize_reading) ... ok
+test_ending_check_and_early_reading_share_budget (test_transcription_refinement.TranscriptionRefinement.test_ending_check_and_early_reading_share_budget) ... ok
+test_local_offsets_cache_and_original_preserved (test_transcription_refinement.TranscriptionRefinement.test_local_offsets_cache_and_original_preserved) ... ok
+test_merge_keeps_outside_caption_and_absolute_offsets (test_transcription_refinement.TranscriptionRefinement.test_merge_keeps_outside_caption_and_absolute_offsets) ... ok
+test_missing_book_still_checks_a_clear_reading_announcement (test_transcription_refinement.TranscriptionRefinement.test_missing_book_still_checks_a_clear_reading_announcement) ... ok
+test_split_preserves_verification_provenance (test_transcription_refinement.TranscriptionRefinement.test_split_preserves_verification_provenance) ... ok
+test_title_and_date_do_not_trigger_audio (test_transcription_refinement.TranscriptionRefinement.test_title_and_date_do_not_trigger_audio) ... ok
+test_health_logo_and_linux_shutdown_guard (test_web_server.WebServer.test_health_logo_and_linux_shutdown_guard) ... ok
+test_utf8_metadata_roundtrip (test_web_server.WebServer.test_utf8_metadata_roundtrip) ... ok
+
+----------------------------------------------------------------------
+Ran 51 tests in 10.674s
+
+OK
+Offline speech model, real OCR initialization and approved enhancer profile passed

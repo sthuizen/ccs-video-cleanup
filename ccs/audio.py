@@ -11,7 +11,7 @@ from pathlib import Path
 import re
 import shutil
 from .common import BIN, DATA_ROOT, command, read_json, status, write_json
-from .audio_setup import SHA256 as EXPECTED_ENHANCER_SHA256
+from .audio_setup import SHA256, WINDOWS_SHA256
 
 VERSION = 2
 FILTER = ('highpass=f=75,lowpass=f=10000,afftdn=nf=-40:nr=8:tn=1:gs=8,'
@@ -19,7 +19,7 @@ FILTER = ('highpass=f=75,lowpass=f=10000,afftdn=nf=-40:nr=8:tn=1:gs=8,'
 
 def profile():
     configured = os.environ.get('CCS_SPEECH_ENHANCER')
-    enhancer = Path(configured) if configured else DATA_ROOT/'.tools/bin/deep-filter'
+    enhancer = Path(configured) if configured else (BIN/'deep-filter.exe' if os.name == 'nt' else DATA_ROOT/'.tools/bin/deep-filter')
     if configured and not enhancer.is_file():
         raise ValueError('The configured speech enhancer is missing. Run its setup or correct CCS_SPEECH_ENHANCER.')
     result = {'version': VERSION, 'filter': FILTER, 'normalization': 'constant-gain-with-peak-limiter',
@@ -28,7 +28,7 @@ def profile():
     if enhancer.is_file():
         with enhancer.open('rb') as stream:
             digest = hashlib.file_digest(stream, 'sha256').hexdigest()
-        if not configured and digest != EXPECTED_ENHANCER_SHA256:
+        if not configured and digest != (WINDOWS_SHA256 if os.name == 'nt' else SHA256):
             raise ValueError('The speech enhancer checksum changed. Run python -m ccs.audio_setup to restore the verified tool.')
         result.update(method='deepfilternet3-and-gentle-speech-cleanup', enhancer=str(enhancer.resolve()),
                       enhancer_sha256=digest, attenuation_limit_db=20)

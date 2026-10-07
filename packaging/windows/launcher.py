@@ -20,7 +20,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 APP = Path(__file__).resolve().parent.parent
 INSTALL = APP.parent
 DATA = Path(os.environ.get('CCS_DATA_DIR', str(Path(os.environ['LOCALAPPDATA'])/'CCSVideoCleanup')))
-VERSION = '1.2.0'
+VERSION = '1.3.0'
 PORT = int(os.environ.get('CCS_PORT', '8765'))
 URL = f'http://127.0.0.1:{PORT}'
 LIB = DATA/'python-packages'
@@ -47,7 +47,7 @@ def write_json(path, value):
 def ready():
     try:
         record=json.loads((DATA/'setup.json').read_text(encoding='utf-8'))
-        return record.get('version')==VERSION and (TOOLS/'ffmpeg.exe').exists() and (LIB/'faster_whisper').is_dir()
+        return record.get('version')==VERSION and (TOOLS/'ffmpeg.exe').exists() and (LIB/'faster_whisper').is_dir() and (TOOLS/'deep-filter.exe').is_file()
     except (OSError,ValueError): return False
 
 
@@ -95,7 +95,14 @@ def prepare(progress=print):
         if not complete:
             # Rebuild only the private library directory; jobs and models are retained.
             dependency_marker.unlink(missing_ok=True)
-            if LIB.exists(): shutil.rmtree(LIB)
+            if LIB.exists():
+                # Rename first: an old wheel cache can contain inaccessible or locked
+                # children even when its parent is writable. Never touch user jobs.
+                previous=DATA/f'python-packages.previous-{time.time_ns()}'
+                LIB.rename(previous)
+                try: shutil.rmtree(previous)
+                except OSError:
+                    progress('An old dependency cache was retained; preparing a fresh cache.')
             LIB.mkdir()
             run([sys.executable,__file__,'--pip','install','--disable-pip-version-check','--no-warn-script-location',
                  '--only-binary=:all:','--require-hashes','--no-compile','--target',LIB,'-r',APP/'windows/requirements.lock'])
@@ -134,7 +141,7 @@ def prepare(progress=print):
             run(['powershell.exe','-NoProfile','-ExecutionPolicy','Bypass','-File',APP/'windows/install_runtime.ps1','-Path',redist])
         progress('Checking video filters, image tools and local OCR.')
         filters=subprocess.check_output([str(TOOLS/'ffmpeg.exe'),'-hide_banner','-filters'],stderr=subprocess.STDOUT,**HIDDEN).decode('utf-8','replace')
-        for required in ('vidstabdetect','vidstabtransform','afftdn','loudnorm'):
+        for required in ('vidstabdetect','vidstabtransform','afftdn','loudnorm','agate','alimiter'):
             if required not in filters: raise RuntimeError('The selected video tools lack '+required)
         try:run([sys.executable,__file__,'--check-tools'])
         except subprocess.CalledProcessError:
@@ -142,6 +149,9 @@ def prepare(progress=print):
             raise
         progress('Downloading and loading the local speech model. This can take several minutes.')
         run([sys.executable,__file__,'--warm-model'])
+        progress('Downloading the verified local speech enhancer.')
+        from ccs.audio_setup import install as install_speech_enhancer
+        install_speech_enhancer(TOOLS, opener=verified_open)
         progress('Saving dependency and model notices.')
         for filename,url in {
             'Whisper-LICENSE.txt':'https://raw.githubusercontent.com/openai/whisper/main/LICENSE',

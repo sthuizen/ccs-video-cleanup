@@ -66,7 +66,7 @@ Finish processing before updating or uninstalling. Uninstall keeps video data.
 Complete guide: https://github.com/thenailedone/ccs-video-cleanup/blob/main/packaging/windows/README.md
 (Repository access is required.)
 ''',encoding='utf-8')
-    output=ROOT/'dist/ccs-video-cleanup_1.2.0_windows_x64_setup.exe';output.parent.mkdir(exist_ok=True)
+    output=ROOT/'dist/ccs-video-cleanup_1.3.0_windows_x64_setup.exe';output.parent.mkdir(exist_ok=True)
     subprocess.run([str(makensis),'-V2',f'-DPAYLOAD={payload}',f'-DOUTPUT={output}',str(ROOT/'packaging/windows/installer.nsi')],check=True)
     with output.open('rb') as f:digest=hashlib.file_digest(f,'sha256').hexdigest()
     output.with_suffix('.exe.sha256').write_text(digest+'  '+output.name+'\n')

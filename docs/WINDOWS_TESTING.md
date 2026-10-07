@@ -22,7 +22,7 @@ $app = "$env:LOCALAPPDATA\Programs\CCSVideoCleanup"
 & "$app\runtime\python.exe" "$app\app\windows\launcher.py" --module windows.verify
 ```
 
-The recorded 1.2.0 test used espeak-ng British English, generated on Linux and copied into the isolated lab. The verifier runs real RapidOCR, loads the cached speech model with `local_files_only=True`, transcribes the fixture and renders an opposed-stereo synthetic video in a temporary path containing spaces and non-ASCII characters. It checks chapters, mono audio, the intro, HTTP logo/health/jobs endpoints, repeat setup, duplicate launch and active-processing shutdown refusal. Reports and synthetic output are under `%LOCALAPPDATA%\CCSVideoCleanup\verification`.
+The recorded 1.2.0 test used espeak-ng British English, generated on Linux and copied into the isolated lab. The verifier runs real RapidOCR, loads the cached speech model with `local_files_only=True`, transcribes the fixture and renders an opposed-stereo synthetic video in a temporary path containing spaces and non-ASCII characters. For 1.3.0 it checks local enhancement, absent player chapters, mono audio, the intro, HTTP logo/health/jobs endpoints, repeat setup, duplicate launch and active-processing shutdown refusal. Reports and synthetic output are under `%LOCALAPPDATA%\CCSVideoCleanup\verification`.
 
 ## Source regression tests
 
@@ -51,4 +51,4 @@ Finally, test a fresh private library directory and a data path containing space
 
 Try the downloader against an authorized public service URL without repeatedly retrying rate limits. The 1.2.0 lab's live YouTube metadata request returned HTTP 429/sign-in verification; a successful authenticated Windows download was not claimed. Firefox-cookie instructions remain available to operators. No personal browser cookies or accounts were copied into the lab.
 
-Record the exact installer hash/byte size, OS builds, test output and limits in [the release validation record](validation/v1.2.0.md). Keep screenshots and inference fixtures synthetic or deidentified. Preserve prior release artifacts unchanged.
+Record the exact installer hash/byte size, OS builds, test output and limits in [the release validation record](validation/v1.3.0.md). Keep screenshots and inference fixtures synthetic or deidentified. Preserve prior release artifacts unchanged.

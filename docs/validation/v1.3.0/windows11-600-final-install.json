@@ -1,0 +1,4 @@
+{
+  "id": "600-final-install",
+  "output": "Installer exit: 0\r\nSetup exit: 0\r\nPreparing the local tools. Please keep this window open.\r\nAn old dependency cache was retained; preparing a fresh cache.\r\nInstalling the locally tested OCR wrapper.\r\nDownloading verified Windows video tools.\r\nChecking video filters, image tools and local OCR.\r\nDownloading and loading the local speech model. This can take several minutes.\r\nDownloading the verified local speech enhancer.\r\nSaving dependency and model notices.\r\nReady. Opening your sermon preparation app.\r\n"
+}

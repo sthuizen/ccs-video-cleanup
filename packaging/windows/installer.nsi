@@ -20,10 +20,10 @@ SetCompressor /SOLID lzma
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_LANGUAGE "English"
-VIProductVersion "1.2.0.0"
+VIProductVersion "1.3.0.0"
 VIAddVersionKey "ProductName" "Christ Church Video Cleanup"
 VIAddVersionKey "FileDescription" "Church sermon video preparation installer"
-VIAddVersionKey "FileVersion" "1.2.0"
+VIAddVersionKey "FileVersion" "1.3.0"
 VIAddVersionKey "LegalCopyright" "Private church-use application; see included rights and dependency notices"
 
 Function LaunchApplication
@@ -63,7 +63,7 @@ copy_files:
   CreateShortCut "$SMPROGRAMS\Christ Church Video Cleanup\Quick start instructions.lnk" "$WINDIR\system32\notepad.exe" '"$INSTDIR\app\windows\QUICK-START.txt"'
   CreateShortCut "$SMPROGRAMS\Christ Church Video Cleanup\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CCSVideoCleanup" "DisplayName" "Christ Church Video Cleanup"
-  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CCSVideoCleanup" "DisplayVersion" "1.2.0"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CCSVideoCleanup" "DisplayVersion" "1.3.0"
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CCSVideoCleanup" "UninstallString" '"$INSTDIR\Uninstall.exe"'
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CCSVideoCleanup" "DisplayIcon" "$INSTDIR\app\windows\church.ico"
   WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CCSVideoCleanup" "NoModify" 1

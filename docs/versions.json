@@ -1,5 +1,5 @@
 {
-  "archive_date": "2026-10-06",
+  "archive_date": "2026-10-08",
   "artifacts": [
     {
       "version": "1.0.0",
@@ -15,7 +15,7 @@
       "bytes": 1172244,
       "sha256": "02467a35e38fbd618e02ed20fe6a58f07e474131e54a9182a23618845c24f0f8",
       "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.1.0",
-      "status": "recommended"
+      "status": "previous Linux release"
     },
     {
       "version": "1.2.0",
@@ -25,6 +25,24 @@
       "sha256": "6e3d6c9e0e0dce752c8dad1e3c3534e98b8f7b54d5c041d691abaceadb84f221",
       "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.2.0",
       "status": "Windows church edition; unsigned installer"
+    },
+    {
+      "version": "1.3.0",
+      "platform": "Ubuntu/Debian amd64",
+      "filename": "ccs-video-cleanup_1.3.0_amd64.deb",
+      "bytes": 1179668,
+      "sha256": "599980303e62e5e092beca866284192a5c4a74a926ea71cf83dad54ee2b3f1d2",
+      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.3.0",
+      "status": "current; approved hall audio and chapterless playback"
+    },
+    {
+      "version": "1.3.0",
+      "platform": "Windows 10/11 x64",
+      "filename": "ccs-video-cleanup_1.3.0_windows_x64_setup.exe",
+      "bytes": 12596000,
+      "sha256": "03b4bcfc89de02ecfbd89e67291c01fc46eb675d51ff697290921e9e56f274dd",
+      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.3.0",
+      "status": "current; approved hall audio and chapterless playback"
     }
   ]
 }

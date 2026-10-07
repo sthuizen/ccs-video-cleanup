@@ -10,16 +10,22 @@ import urllib.request
 VERSION = '0.5.6'
 URL = 'https://github.com/Rikorose/DeepFilterNet/releases/download/v0.5.6/deep-filter-0.5.6-x86_64-unknown-linux-musl'
 SHA256 = '70775e251eee44c0f2451a1e833326cf8bcbbe304d3e7cd12851e6fce72ef7da'
+WINDOWS_URL = 'https://github.com/Rikorose/DeepFilterNet/releases/download/v0.5.6/deep-filter-0.5.6-x86_64-pc-windows-msvc.exe'
+WINDOWS_SHA256 = '75e11fa16445f560cb6b021521ddb89e89270d13b83089705d98776f58fd7915'
 
-def install(directory):
-    if platform.system() != 'Linux' or platform.machine().lower() not in ('x86_64', 'amd64'):
-        raise RuntimeError('This speech-enhancer setup has been validated for Linux x86-64 only.')
+def install(directory, opener=None):
+    opener = opener or urllib.request.urlopen
+    if platform.system() not in ('Linux', 'Windows') or platform.machine().lower() not in ('x86_64', 'amd64'):
+        raise RuntimeError('Speech enhancement requires Linux or Windows on x86-64.')
+    windows = platform.system() == 'Windows'
+    expected = WINDOWS_SHA256 if windows else SHA256
+    url = WINDOWS_URL if windows else URL
     directory = Path(directory); directory.mkdir(parents=True, exist_ok=True)
-    target = directory/'deep-filter'
+    target = directory/('deep-filter.exe' if windows else 'deep-filter')
     verified = False
     if target.is_file():
         with target.open('rb') as stream:
-            verified = hashlib.file_digest(stream, 'sha256').hexdigest() == SHA256
+            verified = hashlib.file_digest(stream, 'sha256').hexdigest() == expected
     notices = directory.parent/'third-party-notices'; notices.mkdir(exist_ok=True)
     names = ('LICENSE-MIT', 'LICENSE-APACHE')
     if verified and all((notices/f'DeepFilterNet-{name}.txt').is_file() for name in names):
@@ -28,14 +34,14 @@ def install(directory):
     with tempfile.TemporaryDirectory(prefix='.enhancer-', dir=directory) as tmp:
         staged = Path(tmp)/'deep-filter'
         if not verified:
-            with urllib.request.urlopen(URL, timeout=60) as response, staged.open('wb') as out:
+            with opener(url, timeout=60) as response, staged.open('wb') as out:
                 shutil.copyfileobj(response, out)
             with staged.open('rb') as stream:
-                if hashlib.file_digest(stream, 'sha256').hexdigest() != SHA256:
+                if hashlib.file_digest(stream, 'sha256').hexdigest() != expected:
                     raise RuntimeError('Speech enhancer checksum mismatch; existing tool was preserved.')
         for name in names:
             address = f'https://raw.githubusercontent.com/Rikorose/DeepFilterNet/v{VERSION}/{name}'
-            with urllib.request.urlopen(address, timeout=60) as response:
+            with opener(address, timeout=60) as response:
                 (notices/f'DeepFilterNet-{name}.txt').write_bytes(response.read())
         if not verified: staged.replace(target)
         target.chmod(0o755)

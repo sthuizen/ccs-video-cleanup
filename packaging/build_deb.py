@@ -90,6 +90,6 @@ Description: Local Christ Church Southampton sermon video preparation
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--version',default='1.1.0')
+    parser.add_argument('--version',default='1.3.0')
     parser.add_argument('--output',type=Path,default=ROOT/'dist')
     args=parser.parse_args();build(args.version,args.output.resolve())

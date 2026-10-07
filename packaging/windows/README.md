@@ -1,6 +1,6 @@
 # Windows church-use installer
 
-This folder builds a Windows 10/11 x64 installer on Linux using NSIS. The application, embedded CPython 3.13.16, pip bootstrap wheel, Bible text and church-authorized branding are included. Specialist Python packages, FFmpeg/Deno and the speech model are prepared automatically on first launch. No system Python installation or cloud AI account is needed.
+This folder builds a Windows 10/11 x64 installer on Linux using NSIS. The application, embedded CPython 3.13.16, pip bootstrap wheel, Bible text and church-authorized branding are included. Specialist Python packages, FFmpeg/Deno, the speech model and the native DeepFilterNet3 enhancer are prepared automatically on first launch. No system Python installation or cloud AI account is needed.
 
 ## Church operator instructions
 
@@ -55,4 +55,8 @@ python3 packaging/windows/build.py --logo assets/church-logo.png
 
 If NSIS is extracted locally, set `NSISDIR` to its `usr/share/nsis` folder and pass `--makensis PATH`. The builder verifies/downloads the embedded Python and pip assets, stages source and branding under ignored `.tools/windows/build`, and writes an installer/checksum under ignored `dist`. It neither installs the app nor touches the production server.
 
-To update dependencies, compile `requirements.in` for Windows x64/Python 3.13 with hash generation, retain RapidOCR's separate lock and test on actual Windows. Bump all installer/launcher version fields together. Record first-run setup, real OCR, offline speech-model inference, synthetic opposed-stereo render, chapters, preview audio, paths with spaces/non-ASCII, duplicate launch, update/uninstall behavior and retained data. Linux tests alone do not prove Windows compatibility.
+To update dependencies, compile `requirements.in` for Windows x64/Python 3.13 with hash generation, retain RapidOCR's separate lock and test on actual Windows. Bump all installer/launcher version fields together. Record first-run setup, real OCR, offline speech-model inference, local enhancement, synthetic opposed-stereo render, absence of player chapters, preview audio, paths with spaces/non-ASCII, duplicate launch, update/uninstall behavior and retained data. Linux tests alone do not prove Windows compatibility.
+
+## Version 1.3.0
+
+This release uses the same approved speech-cleanup settings as the Linux installation: DeepFilterNet3 v0.5.6 with a 20 dB suppression cap, gentle filtering and constant gain targeting -20 LUFS. Setup obtains the official Windows executable directly from upstream and verifies its pinned SHA256 (`75e11fa16445f560cb6b021521ddb89e89270d13b83089705d98776f58fd7915`), retaining MIT/Apache notices. Processing runs locally. Caption refinement and passage/boundary improvements are included; variable services still need operator review. Finished videos and previews omit inferred player chapter labels. Existing downloaded videos retain their original metadata until regenerated or replaced. Install 1.3.0 over the previous version while processing is idle; setup preserves jobs/models and prepares the new enhancer.

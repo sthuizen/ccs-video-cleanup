@@ -36,7 +36,11 @@ def verify():
         render(job)
         assert read_json(job/'validation.json')['audio_channels']==1
         assert read_json(job/'audio-channel-analysis.json')['correlation']<-.99
-        assert len(probe(job/'finished.mp4')['chapters'])==3
+        assert not probe(job/'finished.mp4')['chapters']
+        assert not probe(job/'preview.mp4')['chapters']
+        from ccs.audio import profile
+        assert profile()['method']=='deepfilternet3-and-gentle-speech-cleanup'
+        assert read_json(job/'validation.json')['audio_profile']['attenuation_limit_db']==20
         import shutil
         for name in ('finished.mp4','intro.png','validation.json','preview-validation.json','audio-channel-analysis.json'):
             shutil.copy2(job/name,output/name)
@@ -62,7 +66,7 @@ def verify():
         result=subprocess.run([sys.executable,str(launcher),'--shutdown'])
         assert result.returncode==2,'Shutdown interrupted a held processing lock.'
     with urllib.request.urlopen(URL+'/api/health') as response:assert json.load(response)['instance']==IDENTITY
-    report={'version':VERSION,'windows':sys.getwindowsversion()._asdict() if hasattr(sys.getwindowsversion(),'_asdict') else list(sys.getwindowsversion()),'python':sys.version,'real_ocr':text,'offline_speech_inference':transcript,'church_logo_sha256':hashlib.sha256(LOGO.read_bytes()).hexdigest(),'synthetic_render_opposed_stereo':True,'non_ascii_paths':True,'chapters':True,'web_ui_logo_jobs_api':True,'repeat_setup_reused':True,'duplicate_launch':True,'active_render_shutdown_refused':True}
+    report={'version':VERSION,'windows':sys.getwindowsversion()._asdict() if hasattr(sys.getwindowsversion(),'_asdict') else list(sys.getwindowsversion()),'python':sys.version,'real_ocr':text,'offline_speech_inference':transcript,'church_logo_sha256':hashlib.sha256(LOGO.read_bytes()).hexdigest(),'synthetic_render_opposed_stereo':True,'non_ascii_paths':True,'player_chapters_disabled':True,'speech_enhancer':'DeepFilterNet3, 20 dB cap, constant gain -20 LUFS','web_ui_logo_jobs_api':True,'repeat_setup_reused':True,'duplicate_launch':True,'active_render_shutdown_refused':True}
     (output/'verification.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
     print(json.dumps(report,indent=2))
 

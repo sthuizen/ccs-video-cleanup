@@ -1,5 +1,6 @@
 import hashlib
 import io
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -8,6 +9,18 @@ from ccs import audio_setup
 
 
 class EnhancerSetup(unittest.TestCase):
+    def test_windows_installs_the_pinned_native_executable(self):
+        content=b'synthetic windows executable'
+        digest=hashlib.sha256(content).hexdigest()
+        with tempfile.TemporaryDirectory() as directory:
+            def fetch(url, **kwargs):
+                return io.BytesIO(content if url==audio_setup.WINDOWS_URL else b'license notice')
+            with patch('ccs.audio_setup.platform.system',return_value='Windows'), patch('ccs.audio_setup.platform.machine',return_value='AMD64'), patch('ccs.audio_setup.WINDOWS_SHA256',digest):
+                target=audio_setup.install(Path(directory)/'tools',opener=fetch)
+                self.assertEqual(target.name,'deep-filter.exe')
+                self.assertEqual(target.read_bytes(),content)
+                self.assertTrue((Path(directory)/'third-party-notices/DeepFilterNet-LICENSE-MIT.txt').exists())
+
     def test_bad_download_preserves_existing_tool(self):
         with tempfile.TemporaryDirectory() as directory:
             target=Path(directory)/'bin/deep-filter'; target.parent.mkdir()
@@ -30,7 +43,8 @@ class EnhancerSetup(unittest.TestCase):
                 self.assertEqual(audio_setup.install(target.parent),target)
                 self.assertEqual(fetch.call_count,2)
             self.assertEqual(target.read_bytes(),content)
-            self.assertTrue(target.stat().st_mode & 0o100)
+            if os.name != 'nt':
+                self.assertTrue(target.stat().st_mode & 0o100)
 
 
 if __name__=='__main__':unittest.main()

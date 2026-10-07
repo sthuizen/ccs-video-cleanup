@@ -1,6 +1,7 @@
 """Signal-level checks for constant gain, soft suppression and cached audio."""
 from pathlib import Path
 import subprocess
+import os
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -12,7 +13,7 @@ from ccs import audio
 from ccs.common import BIN
 
 
-@unittest.skipUnless((BIN/'ffmpeg').is_file(), 'Local FFmpeg is required')
+@unittest.skipUnless((BIN/('ffmpeg.exe' if os.name == 'nt' else 'ffmpeg')).is_file(), 'Local FFmpeg is required')
 class AudioSignalTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -131,8 +132,8 @@ class AudioSignalTests(unittest.TestCase):
 
     def test_default_enhancer_integrity_failure_is_detected_before_execution(self):
         directory = self.root/'.tools/bin'; directory.mkdir(parents=True)
-        (directory/'deep-filter').write_bytes(b'changed executable')
-        with patch.object(audio, 'DATA_ROOT', self.root), patch.dict('os.environ', {}, clear=True):
+        (directory/('deep-filter.exe' if os.name == 'nt' else 'deep-filter')).write_bytes(b'changed executable')
+        with patch.object(audio, 'DATA_ROOT', self.root), patch.object(audio, 'BIN', directory), patch.dict('os.environ', {}, clear=True):
             with self.assertRaisesRegex(ValueError, 'checksum changed'):
                 audio.profile()
 

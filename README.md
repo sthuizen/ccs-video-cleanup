@@ -2,12 +2,12 @@
 
 Prepare a full church-service recording into a sermon video: a five-second introduction followed by the selected Bible reading and sermon, with cleaned mono audio and optional camera stabilization. A local browser interface lets you review the date, passage, title and cut points before creating the finished video.
 
-**Choose the installer for your computer:** [Windows 10/11](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.2.0) or [Ubuntu/Debian](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.1.0). This private repository preserves earlier versions too. Version 1.0.0 is a legacy archive.
+**Choose the installer for your computer:** [Windows 10/11](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.3.0) or [Ubuntu/Debian](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.3.0). This private repository preserves earlier versions too. Version 1.0.0 is a legacy archive.
 
 ## Install on Windows 10 or 11
 
-1. Sign into GitHub with access to this private repository. Download `ccs-video-cleanup_1.2.0_windows_x64_setup.exe` and its `.exe.sha256` checksum from the [Windows release](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.2.0).
-2. To check the download, run `Get-FileHash .\ccs-video-cleanup_1.2.0_windows_x64_setup.exe -Algorithm SHA256` in PowerShell and compare it with the checksum file. Run the installer and follow the wizard. It installs for your user account and creates a branded desktop and Start menu shortcut.
+1. Sign into GitHub with access to this private repository. Download `ccs-video-cleanup_1.3.0_windows_x64_setup.exe` and its `.exe.sha256` checksum from the [Windows release](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.3.0).
+2. To check the download, run `Get-FileHash .\ccs-video-cleanup_1.3.0_windows_x64_setup.exe -Algorithm SHA256` in PowerShell and compare it with the checksum file. Run the installer and follow the wizard. It installs for your user account and creates a branded desktop and Start menu shortcut.
 3. Open **Christ Church Video Cleanup**. Keep the PC online and awake during the first setup. The browser shows progress and retry controls; no Python installation or AI account is needed. Approve the Microsoft C++ prerequisite prompt if it appears.
 4. When the app opens, follow **Prepare a sermon** below.
 
@@ -17,12 +17,12 @@ The church logo is included for the church's requested use. This installer suppo
 
 Validated targets are **Ubuntu 24.04 LTS and Debian 13, amd64/x86-64**. Other distributions, release versions and ARM systems require separate validation. Ubuntu needs its `universe` repository enabled.
 
-1. Sign in to GitHub with access to this repository. Open the [recommended release](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.1.0) and download the `.deb` and its `.deb.sha256` file into the same folder.
+1. Sign in to GitHub with access to this repository. Open the [recommended release](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.3.0) and download the `.deb` and its `.deb.sha256` file into the same folder.
 2. Open a terminal in that folder and run:
 
    ```bash
-   sha256sum -c ccs-video-cleanup_1.1.0_amd64.deb.sha256
-   sudo apt install ./ccs-video-cleanup_1.1.0_amd64.deb
+   sha256sum -c ccs-video-cleanup_1.3.0_amd64.deb.sha256
+   sudo apt install ./ccs-video-cleanup_1.3.0_amd64.deb
    ccs-video-cleanup setup
    ```
 
@@ -47,7 +47,7 @@ Speech recognition uses faster-whisper `small.en` on the CPU when usable English
 
 The app preserves the source and analysis evidence. It checks stereo phase before mixing so opposed channels do not cancel the voice. It asks for uncertain metadata instead of inventing an official title or treating an upload date as the service date. These checks improve reliability, but the operator still needs to check the result.
 
-The October 2026 Linux audio/detection improvements pass 50 tests and complete-file checks on three real recordings in the original installation. The operator approved the revised audio as the default on 7 October; a new service processed independently through the app remains the next acceptance check. The published 1.1.0 Debian and 1.2.0 Windows installers retain their original contents, with updated installers deferred until that check succeeds. See [complete Linux validation and listening comparisons](docs/validation/linux-audio-detection-2026-10-07.md), [audio research and measured limits](docs/AUDIO_RESEARCH.md) and [real-recording detection validation](docs/DETECTION_VALIDATION.md). Speech-like crowd noise and reverberation can remain. For a source checkout, `.venv/bin/python -m ccs.audio_setup` installs the verified Linux x64 enhancer without reinstalling the app or changing the service. Its method and checksum are recorded with each rendered job.
+Version 1.3.0 includes the audio settings approved on the original Linux installation, improved caption/passage/boundary analysis and removal of inferred player chapter labels. Windows and Linux install the corresponding verified native DeepFilterNet3 executable with the same 20 dB suppression cap and constant gain targeting -20 LUFS. See [audio research and measured limits](docs/AUDIO_RESEARCH.md), [detection evidence](docs/DETECTION_VALIDATION.md) and [release validation](docs/validation/v1.3.0.md). Speech-like crowd noise and reverberation can remain, and unusual services still need manual review. For a source checkout, `.venv/bin/python -m ccs.audio_setup` installs the verified Linux x64 enhancer. Its method and checksum are recorded with each rendered job.
 
 ## Documentation
 
@@ -67,8 +67,9 @@ The October 2026 Linux audio/detection improvements pass 50 tests and complete-f
 
 | Version | Status | Packaging |
 |---|---|---|
+| [1.3.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.3.0) | Current Linux and Windows | Approved hall audio; improved detection; player labels disabled |
 | [1.2.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.2.0) | Windows edition | Branded x64 installer; automatic user setup |
-| [1.1.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.1.0) | Recommended for Ubuntu/Debian | Small application-only `.deb`; APT libraries and user setup |
+| [1.1.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.1.0) | Previous Ubuntu/Debian release | Small application-only `.deb`; APT libraries and user setup |
 | [1.0.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.0.0) | Legacy private archive | Large bundled runtime; redistribution audit unfinished |
 
 Version 1.2.0 was tested in actual Windows 10/11 KVM guests, including real OCR, offline speech inference, synthetic media rendering, 23 Python tests, four browser-interface checks and installation/update/uninstall data retention. See the [Windows validation record](docs/validation/v1.2.0.md) and [reproduction guide](docs/WINDOWS_TESTING.md) for exact scope and network limits.
