@@ -2,7 +2,7 @@
   "date": "2026-10-07",
   "scope": "original Linux x86-64 installation; released Windows/Debian installers unchanged",
   "tests_passed": 50,
-  "human_listening_confirmed": false,
+  "human_listening_confirmed": true,
   "complete_videos": [
     {
       "service": "2026-09-06",
@@ -133,5 +133,12 @@
       "previous_delay_seconds": 0.0463125,
       "new_delay_seconds": 0.0
     }
-  ]
+  ],
+  "operator_acceptance": {
+    "date": "2026-10-07",
+    "scope": "Operator reports revised finished audio is much better and approves it as the default; no claim that all excerpts were auditioned.",
+    "installed_default_matches_approved_october_output": true,
+    "fresh_service_processed_independently_through_app": "pending",
+    "updated_debian_and_windows_installers": "deferred until fresh-service acceptance"
+  }
 }

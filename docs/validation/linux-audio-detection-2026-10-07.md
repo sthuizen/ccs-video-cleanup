@@ -1,6 +1,8 @@
 # Linux audio and detection validation — 7 October 2026
 
-The original Linux installation was updated and all three real recordings regenerated. **50 Python tests passed**, including installed-model processing, opposed-stereo handling, complete synthetic rendering, master audio alignment, preview integrity, setup checksum failure and caption refinement. Four existing browser-interface checks also passed. This record does not validate a new Windows or Debian installer. Human listening confirmation remains pending.
+The original Linux installation was updated and all three real recordings regenerated. **50 Python tests passed**, including installed-model processing, opposed-stereo handling, complete synthetic rendering, master audio alignment, preview integrity, setup checksum failure and caption refinement. Four existing browser-interface checks also passed. This record does not validate a new Windows or Debian installer.
+
+On 7 October the operator reported that the revised finished audio was much better and approved these settings as the new default. The installed default profile was checked against the approved October output and matched exactly. This is operator approval of the revised audio, not a claim that every tested excerpt was auditioned. The next acceptance check is a fresh service processed by the operator through the installed interface without Codex handling the job: passage, proposed boundaries, manual review and finished audio. Updated Debian and Windows installers are deferred until that check succeeds.
 
 ## Complete real outputs
 
