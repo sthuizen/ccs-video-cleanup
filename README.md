@@ -1,13 +1,13 @@
 # Christ Church Video Cleanup
 
-Prepare a full church-service recording into a sermon video: a five-second introduction followed by the selected Bible reading and sermon, with cleaned mono audio and optional camera stabilization. A local browser interface lets you review the date, passage, title and cut points before creating the finished video.
+Prepare a full church-service recording into a sermon video and/or podcast audio: video adds a five-second introduction before the selected Bible reading and sermon; podcast audio starts directly with the clip, with cleaned mono audio and optional camera stabilization. A local browser interface lets you review the date, passage, title and cut points before creating the finished video.
 
-**Choose the installer for your computer:** [Windows 10/11](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.3.0) or [Ubuntu/Debian](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.3.0). This private repository preserves earlier versions too. Version 1.0.0 is a legacy archive.
+**Choose the installer for your computer:** [Windows 10/11](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.0) or [Ubuntu/Debian](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.0). This private repository preserves earlier versions too. Version 1.0.0 is a legacy archive.
 
 ## Install on Windows 10 or 11
 
-1. Sign into GitHub with access to this private repository. Download `ccs-video-cleanup_1.3.0_windows_x64_setup.exe` and its `.exe.sha256` checksum from the [Windows release](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.3.0).
-2. To check the download, run `Get-FileHash .\ccs-video-cleanup_1.3.0_windows_x64_setup.exe -Algorithm SHA256` in PowerShell and compare it with the checksum file. Run the installer and follow the wizard. It installs for your user account and creates a branded desktop and Start menu shortcut.
+1. Sign into GitHub with access to this private repository. Download `ccs-video-cleanup_1.4.0_windows_x64_setup.exe` and its `.exe.sha256` checksum from the [Windows release](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.0).
+2. To check the download, run `Get-FileHash .\ccs-video-cleanup_1.4.0_windows_x64_setup.exe -Algorithm SHA256` in PowerShell and compare it with the checksum file. Run the installer and follow the wizard. It installs for your user account and creates a branded desktop and Start menu shortcut.
 3. Open **Christ Church Video Cleanup**. Keep the PC online and awake during the first setup. The browser shows progress and retry controls; no Python installation or AI account is needed. Approve the Microsoft C++ prerequisite prompt if it appears.
 4. When the app opens, follow **Prepare a sermon** below.
 
@@ -17,12 +17,12 @@ The church logo is included for the church's requested use. This installer suppo
 
 Validated targets are **Ubuntu 24.04 LTS and Debian 13, amd64/x86-64**. Other distributions, release versions and ARM systems require separate validation. Ubuntu needs its `universe` repository enabled.
 
-1. Sign in to GitHub with access to this repository. Open the [recommended release](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.3.0) and download the `.deb` and its `.deb.sha256` file into the same folder.
+1. Sign in to GitHub with access to this repository. Open the [recommended release](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.0) and download the `.deb` and its `.deb.sha256` file into the same folder.
 2. Open a terminal in that folder and run:
 
    ```bash
-   sha256sum -c ccs-video-cleanup_1.3.0_amd64.deb.sha256
-   sudo apt install ./ccs-video-cleanup_1.3.0_amd64.deb
+   sha256sum -c ccs-video-cleanup_1.4.0_amd64.deb.sha256
+   sudo apt install ./ccs-video-cleanup_1.4.0_amd64.deb
    ccs-video-cleanup setup
    ```
 
@@ -33,27 +33,33 @@ The package uses APT for standard dependencies. Specialist AI packages, the YouT
 
 ## Prepare a sermon
 
-1. Paste the completed service's YouTube URL and choose **Prepare sermon**.
+1. Paste the completed service's YouTube URL. Check the available resolutions, leave the highest selected or choose a lower one, then choose **Prepare sermon**.
 2. Leave the computer running while it downloads and analyzes the recording. Closing the browser does not cancel processing.
 3. If the app asks for details, play around the suggested cut points and supply the missing date, passage, title or timestamps. Unusual services can require manual correction; the interface is designed for that.
-4. Choose **Save details and create video** when you are satisfied. Strong, unambiguous evidence can permit automatic rendering.
-5. Watch the intro and check the beginning and end. Download **finished.mp4**, the full-quality output. Browser playback uses a separate preview.
+4. Choose **YouTube · video**, **Spotify · podcast audio**, or both under **Where will you share this sermon?** YouTube is the default.
+5. Choose **Save details and make audio tests**. Listen to **Natural voice**, **Balanced cleanup** and **Stronger cleanup**, each with quiet and louder speech. Choose and create your selected exports, or choose **Choose and tweak audio** to adjust and retest. **Reset to chosen preset** restores its original settings.
+6. Step **5. Export** provides the finished downloads. Check the intro, beginning and ending of the YouTube MP4. The Spotify MP3 uses the same tested conditioning, 48 kHz/128 kbps mono, without the video intro silence. Upload the files manually to the appropriate platform.
+
+The pinned step bar shows completed and pending steps, current task and measured progress. It remains at the top while scrolling. Fresh launch starts with no saved service selected; use **Prepared services** to reopen a saved job. Delete controls are collapsed by default and require two-stage confirmation.
+
+Both desktop packages include a system tray icon. Closing the browser keeps processing running. Open the tray menu to inspect progress, reopen the app or choose **Quit and stop services**. Quitting active desktop work asks first. Windows may keep the icon in the hidden-icons overflow. Linux needs a desktop tray host and user systemd for the packaged tray.
 
 There is no publishing or upload step. See the [operator guide](docs/USER_GUIDE.md) for review examples, file locations and CLI commands.
 
 ## What runs locally?
 
-Speech recognition uses faster-whisper `small.en` on the CPU when usable English captions are unavailable. The current Linux source also checks short audio excerpts when captions omit reading or closing evidence, and uses a separately downloaded local DeepFilterNet3 model for speech cleanup. Slide reading uses RapidOCR. Passage matching and selection rules are conventional code; FFmpeg handles further audio filtering, constant playback gain and stabilization. **There are no cloud AI API calls, API keys or subscriptions.** Installation contacts dependency/model providers; YouTube processing contacts YouTube and may use locally read browser cookies. Cached local recordings and models support offline processing.
+Speech recognition uses faster-whisper `small.en` on the CPU when usable English captions are unavailable. The app also checks short audio excerpts when captions omit reading or closing evidence, and uses a separately downloaded local DeepFilterNet3 model for speech cleanup. Slide reading uses RapidOCR. Passage matching and selection rules are conventional code; FFmpeg handles further audio filtering, constant playback gain and stabilization. **There are no cloud AI API calls, API keys or subscriptions.** Installation contacts dependency/model providers; YouTube processing contacts YouTube and may use locally read browser cookies. Cached local recordings and models support offline processing.
 
 The app preserves the source and analysis evidence. It checks stereo phase before mixing so opposed channels do not cancel the voice. It asks for uncertain metadata instead of inventing an official title or treating an upload date as the service date. These checks improve reliability, but the operator still needs to check the result.
 
-Version 1.3.0 includes the audio settings approved on the original Linux installation, improved caption/passage/boundary analysis and removal of inferred player chapter labels. Windows and Linux install the corresponding verified native DeepFilterNet3 executable with the same 20 dB suppression cap and constant gain targeting -20 LUFS. See [audio research and measured limits](docs/AUDIO_RESEARCH.md), [detection evidence](docs/DETECTION_VALIDATION.md) and [release validation](docs/validation/v1.3.0.md). Speech-like crowd noise and reverberation can remain, and unusual services still need manual review. For a source checkout, `.venv/bin/python -m ccs.audio_setup` installs the verified Linux x64 enhancer. Its method and checksum are recorded with each rendered job.
+Version 1.4.0 adds guided audio comparisons and tuning, resolution selection, safe saved-service deletion, Linux and Windows tray control, and YouTube/Spotify exports. The Balanced preset retains the previously approved 20 dB suppression and -20 LUFS target; the chosen preset or adjustment is applied to both outputs. See [audio tuning](docs/AUDIO_TUNING.md), [detection evidence](docs/DETECTION_VALIDATION.md) and [release verification](docs/validation/v1.4.0.md). All speech recognition, OCR and enhancement run locally.
 
 ## Documentation
 
 | You need to… | Read |
 |---|---|
 | Install, migrate, add a logo or uninstall | [Windows instructions](packaging/windows/README.md) or [Ubuntu/Debian instructions](packaging/README.md) |
+| Illustrated step-by-step instructions | [Linux PDF](output/pdf/CCS-Video-Cleanup-Linux-Guide.pdf) or [Windows PDF](output/pdf/CCS-Video-Cleanup-Windows-Guide.pdf) |
 | Prepare a service and correct uncertain information | [Operator guide](docs/USER_GUIDE.md) |
 | Resolve setup, download, review or rendering problems | [Troubleshooting](docs/TROUBLESHOOTING.md) |
 | Back up jobs, maintain tools or recover an installation | [Maintenance and recovery](docs/MAINTENANCE.md) |
@@ -67,7 +73,8 @@ Version 1.3.0 includes the audio settings approved on the original Linux install
 
 | Version | Status | Packaging |
 |---|---|---|
-| [1.3.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.3.0) | Current Linux and Windows | Approved hall audio; improved detection; player labels disabled |
+| [1.4.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.0) | Current Linux and Windows | Audio review/tuning, tray, storage controls, YouTube and Spotify exports |
+| [1.3.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.3.0) | Previous Linux and Windows | Approved hall audio; improved detection; player labels disabled |
 | [1.2.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.2.0) | Windows edition | Branded x64 installer; automatic user setup |
 | [1.1.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.1.0) | Previous Ubuntu/Debian release | Small application-only `.deb`; APT libraries and user setup |
 | [1.0.0](https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.0.0) | Legacy private archive | Large bundled runtime; redistribution audit unfinished |

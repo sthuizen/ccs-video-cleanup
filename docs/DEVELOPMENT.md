@@ -12,7 +12,7 @@ cd ccs-video-cleanup
 git switch -c your-change
 ```
 
-`main` is current source/documentation. `v1.0.0` is a recovered historical snapshot; `v1.1.0` identifies the recommended version's source. See [version provenance](VERSION_HISTORY.md). Release binaries are separate attachments and are not included by cloning. Bible text and provenance are tracked; the logo, toolchains and model caches are not.
+`main` is current source/documentation. `v1.0.0` is a recovered historical snapshot; `v1.4.0` identifies the current release source. See [version provenance](VERSION_HISTORY.md). Release binaries are separate attachments and are not included by cloning. Bible text and provenance are tracked; the logo, toolchains and model caches are not.
 
 ## Run a development copy
 
@@ -47,6 +47,11 @@ deno run --allow-read tests/download_access.js
 deno run --allow-read tests/preview_display.js
 deno run --allow-read tests/progress_display.js
 deno run --allow-read tests/review_precision.js
+deno run --allow-read tests/audio_workflow.js
+deno run --allow-read tests/service_selection.js
+deno run --allow-read tests/resolution_selection.js
+deno run --allow-read tests/library_controls.js
+deno run --allow-read tests/export_choices.js
 ```
 
 In a source-local installation use `.tools/bin/deno`; in a packaged one use the Deno installed in its venv if not on PATH. Do not restart a production render to test unrelated documentation or UI changes.
@@ -56,14 +61,14 @@ In a source-local installation use `.tools/bin/deno`; in a packaged one use the 
 On a Debian-family build machine with Python 3 and `dpkg-deb`:
 
 ```bash
-python3 packaging/build_deb.py --version 1.1.1
+python3 packaging/build_deb.py --version 1.4.0
 ```
 
 Use a new version for new content. The builder writes a `.deb` and SHA-256 checksum into ignored `dist/`; it does not install the package, need model caches or alter a running server. Version 1.1's design excludes third-party binaries/wheels/models and branding. Keep that boundary intact. The preserved original 1.1.0 artifact is authoritative; rebuilds are not promised to be bit-identical because packaging timestamps/documentation can differ.
 
 ## Verify a release
 
-Install the candidate through APT in each intended target distro, then run setup as a normal user. Confirm standard Python libraries come from `/usr/lib/python3/dist-packages`. Exercise OCR, offline Whisper loading, repeated setup, web/API and a complete synthetic render with opposed stereo, chapters, mono audio and preview validation. `packaging/verify_installed.py` provides installed-environment smoke checks; it must be run with that installation's Python and appropriate app/data/model paths. It does not replace the media test or a real desktop launch check.
+Install the candidate through APT in each intended target distro, then run setup as a normal user. Confirm standard Python libraries come from `/usr/lib/python3/dist-packages`. Exercise OCR, offline Whisper loading, repeated setup, web/API and a complete synthetic render with opposed stereo, absence of player chapters, mono audio and preview validation. `packaging/verify_installed.py` provides installed-environment smoke checks; it must be run with that installation's Python and appropriate app/data/model paths. It does not replace the media test or a real desktop launch check.
 
 The archived 1.1 evidence used proot Ubuntu 24.04/Python 3.12 and Debian 13/Python 3.13 with a shared host kernel. A future desktop release should additionally test menu launch, login startup and service lifecycle on actual target desktops. Record what was and was not tested honestly.
 
@@ -81,6 +86,8 @@ Before publishing a new private release:
 
 The [Windows builder and guide](../packaging/windows/README.md) explain the Linux NSIS build. The embedded runtime and pip wheel have pinned SHA-256 values; Python dependencies use Windows x64 hash locks. Download the authorized raw logo from the private Windows release and supply it locally because the raw branding file is excluded from Git. Keep VM images, installers, models and lab credentials under ignored `.tools`/`dist` folders.
 
-Run source regression tests on Linux, then use actual Windows for native import, OCR, offline speech inference and FFmpeg rendering. `packaging/windows/verify.py` runs via the installed launcher with `--module windows.verify` and `CCS_TEST_SPEECH` pointing to a synthetic English WAV. It checks a path containing spaces and non-ASCII characters, the opposed-stereo case, chapters, logo/health endpoints, repeated setup, duplicate launch and refusal to shut down during processing. Follow this with the Python suite and Deno UI checks, plus actual installer update/uninstall/reinstall and shortcut tests. A successful Linux build alone is insufficient.
+Run source regression tests on Linux, then use actual Windows for native import, OCR, offline speech inference and FFmpeg rendering. `packaging/windows/verify.py` runs via the installed launcher with `--module windows.verify` and `CCS_TEST_SPEECH` pointing to a synthetic English WAV. It checks a path containing spaces and non-ASCII characters, the opposed-stereo case, absence of player chapters, logo/health endpoints, repeated setup, duplicate launch and refusal to shut down during processing. Follow this with the Python suite and Deno UI checks, plus actual installer update/uninstall/reinstall and shortcut tests. A successful Linux build alone is insufficient.
 
 No Windows VM or evaluation OS is distributed. Source tags, installer/checksum assets and sanitized test reports belong together in the private release. Do not claim Authenticode signing unless a real trusted certificate was used.
+
+Version 1.4.0 builders include the platform PDF guides, so first run `tools/build_user_guides.py` after updating the screenshot fixtures. New UI checks also cover `audio_workflow`, `service_selection`, `resolution_selection`, `library_controls` and `export_choices`. Windows tray feedback uses `/api/tray`; the server starts its native WinForms tray in a kill-on-close Windows job object. Linux packaged tray is a separate GTK user unit. See the 1.4.0 validation record for actual tested scope.

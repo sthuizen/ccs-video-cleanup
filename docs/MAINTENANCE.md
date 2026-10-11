@@ -27,7 +27,7 @@ ccs-video-cleanup setup --update-downloader
 
 The update refreshes yt-dlp/Deno and their inventory without replacing speech models. The AI versions are deliberately selected by the application setup. Review and test changes rather than upgrading every pip package indiscriminately or replacing APT-provided NumPy/Pillow/SciPy/PyAV/OpenCV with wheels.
 
-A future app `.deb` can be installed with `sudo apt install ./PACKAGE.deb`. Finish active processing and stop the packaged service before switching versions; run setup afterward. Record the installer checksum and retain the previous known-good installer. The historical 1.0 archive is not the recommended rollback target: it uses a different bundled runtime. Prefer a tested application-only version.
+A newer app `.deb` can be installed with `sudo apt install ./PACKAGE.deb`. Finish active processing and use the tray to stop the packaged server and tray before switching versions; run setup afterward. Record the installer checksum and retain the previous known-good installer. The historical 1.0 archive is not the recommended rollback target: it uses a different bundled runtime. Prefer a tested application-only version.
 
 ## Recovery on a new machine
 
@@ -49,6 +49,6 @@ Grant repository access only to intended collaborators. [GitHub's visibility doc
 
 Use **Video files and evidence** in the Start menu to open `%LOCALAPPDATA%\CCSVideoCleanup`. Back up `jobs`, manual corrections and any original videos referenced outside that folder. Installed application files live separately in `%LOCALAPPDATA%\Programs\CCSVideoCleanup` by default.
 
-Finish processing before running a newer installer or uninstalling. The application refuses to interrupt a held processing lock. Uninstall keeps data, models and downloaded tools. Reinstall the same version and reopen the shortcut to reuse completed setup. To reclaim retained data, first make a verified backup, then remove the data folder manually after uninstalling.
+Finish processing before running a newer installer or uninstalling. The installer refuses to interrupt a held processing lock. The tray can stop active desktop work after explicit confirmation; unfinished output may need recreating. Uninstall keeps data, models and downloaded tools. Reinstall the same version and reopen the shortcut to reuse completed setup. To reclaim retained data, first make a verified backup, then remove the data folder manually after uninstalling.
 
 Dependency pins change only through a new tested release. First-run notices and `setup.json` record installed versions. A changed lock triggers private dependency refresh while retaining jobs/models. Use the setup log and retry button for recoverable setup failures. See the [Windows guide](../packaging/windows/README.md).

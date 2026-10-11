@@ -26,7 +26,7 @@ def status(job, stage, detail='', **progress):
     history=previous.get('steps',[])
     if stage=='Queued': previous={}; history=[]
     if previous.get('stage')!=stage:
-        if previous.get('stage') and previous['stage'] not in ('Finished','Error','Needs information'):
+        if previous.get('stage') and previous['stage'] not in ('Finished','Error','Needs information','Choose audio'):
             history=history+[{'stage':previous['stage'], 'elapsed_seconds':max(0,now-previous.get('started_at',previous.get('updated',now))), 'completed':stage!='Error'}]
         record={'stage':stage,'started_at':now,'run_started_at':previous.get('run_started_at',now),'steps':history}
     else:

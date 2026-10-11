@@ -17,3 +17,4 @@ assets/web-bible.zip
 assets/bible/*
 !assets/bible/engwebp_vpl.txt
 !assets/bible/engwebp_about.htm
+tmp/

@@ -2,7 +2,7 @@
 import re, time
 from .common import read_json
 
-TERMINAL={'Finished','Error','Needs information'}
+TERMINAL={'Finished','Error','Needs information','Choose audio'}
 
 def tail(path):
     if not path.exists(): return ''

@@ -1,0 +1,25 @@
+const script=await Deno.readTextFile('ccs/library.js');
+const elements=new Map();
+function element(id){if(!elements.has(id))elements.set(id,{id,dataset:{},value:'',checked:false,innerHTML:'',textContent:'',querySelectorAll:()=>[],focus(){this.focused=true},showModal(){this.open=true},close(){this.open=false}});return elements.get(id)}
+const document={querySelector:s=>element(s)};
+const rows=[{id:'done',plan:{title:'Finished sermon'},can_delete:true,audio_busy:false}];
+const calls=[];
+const post=async(path,data)=>{calls.push({path,data});return path==='/api/delete-preview'?{token:'ticket',phrase:data.all?'DELETE ALL':'DELETE',jobs:[{id:'done',title:'Finished sermon',bytes:100}],bytes:100}:{deleted:['done']}};
+const api=new Function('document','rows','esc','post','refresh',"let selected='done',lastKey='';"+script+';return {libraryPaint,deletionOpen,deletionConfirm};')(document,rows,String,post,async()=>{});
+api.libraryPaint();
+if(!element('#saved-services').innerHTML.includes('data-trash="done"'))throw Error('Finished service lacks trash button');
+await api.deletionOpen(null);
+if(!element('#delete-checks').hidden||!element('#delete-confirm').hidden||!element('#delete-confirm').disabled)throw Error('Deletion can bypass the review stage');
+if(!element('#delete-cancel').focused)throw Error('Cancel is not the safe initial focus');
+element('#delete-next').onclick();
+element('#delete-phrase').value='DELETE';element('#delete-phrase').oninput();
+if(!element('#delete-confirm').disabled)throw Error('Wrong master phrase is accepted');
+element('#delete-phrase').value='DELETE ALL';element('#delete-phrase').oninput();
+if(!element('#delete-confirm').disabled)throw Error('Missing acknowledgment is accepted');
+element('#delete-ack').checked=true;element('#delete-ack').onchange();
+if(element('#delete-confirm').disabled)throw Error('Both checks did not enable confirmation');
+element('#delete-cancel').onclick();
+if(calls.some(c=>c.path==='/api/delete'))throw Error('Cancel sent a deletion');
+rows[0].audio_busy=true;api.libraryPaint();
+if(!element('#delete-all').disabled)throw Error('Master deletion enabled during processing');
+console.log('Trash buttons, review stage, typed master confirmation, acknowledgment, cancel and busy protection passed.');

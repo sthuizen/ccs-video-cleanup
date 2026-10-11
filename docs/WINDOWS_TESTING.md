@@ -51,4 +51,10 @@ Finally, test a fresh private library directory and a data path containing space
 
 Try the downloader against an authorized public service URL without repeatedly retrying rate limits. The 1.2.0 lab's live YouTube metadata request returned HTTP 429/sign-in verification; a successful authenticated Windows download was not claimed. Firefox-cookie instructions remain available to operators. No personal browser cookies or accounts were copied into the lab.
 
-Record the exact installer hash/byte size, OS builds, test output and limits in [the release validation record](validation/v1.3.0.md). Keep screenshots and inference fixtures synthetic or deidentified. Preserve prior release artifacts unchanged.
+Record the exact installer hash/byte size, OS builds, test output and limits in [the release validation record](validation/v1.4.0.md). Keep screenshots and inference fixtures synthetic or deidentified. Preserve prior release artifacts unchanged.
+
+## Native tray and 1.4 exports
+
+Check notification-area overflow as well as visible icons. Close the browser and confirm the server and one tray remain. Hover/right-click for current task/progress, reopen the app, and choose Quit and stop services. Confirm the server and tray terminate, then relaunch and check Ready with no selected service. Exercise active-work confirmation, the CLI lock refusal, and the Windows job object's kill-on-close child cleanup.
+
+Run every `tests/*.js` check against an isolated source fixture; check the installed HTML's Windows anonymous-download default separately. Standard Windows users may skip the symlink-only test with WinError 1314; path traversal and deletion confirmation tests still run. Exercise native Recycle Bin recovery with a synthetic job. Export a synthetic podcast and both outputs using the same chosen profile; full decode, duration, format and peaks must pass. Verify the installed PDF and Start menu guide shortcut.

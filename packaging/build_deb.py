@@ -9,7 +9,7 @@ import tempfile
 
 ROOT=Path(__file__).resolve().parent.parent
 INSTALL='/usr/lib/ccs-video-cleanup'
-DEPENDS='python3 (>= 3.11), python3-venv, python3-pil (>= 9), python3-numpy (>= 1.21.6), python3-scipy, python3-opencv (>= 4.5), python3-av (>= 11), ffmpeg (>= 7:5), fonts-dejavu-core, ca-certificates, xdg-utils'
+DEPENDS='python3 (>= 3.11), python3-venv, python3-gi, gir1.2-gtk-3.0, libayatana-appindicator3-1, python3-pil (>= 9), python3-numpy (>= 1.21.6), python3-scipy, python3-opencv (>= 4.5), python3-av (>= 11), ffmpeg (>= 7:5), fonts-dejavu-core, ca-certificates, xdg-utils'
 
 
 def write(path, content, executable=False):
@@ -24,6 +24,10 @@ def build(version, output):
     with tempfile.TemporaryDirectory(prefix='.ccs-deb-',dir=output) as temporary:
         stage=Path(temporary);app=stage/INSTALL.lstrip('/');app.mkdir(parents=True)
         shutil.copytree(ROOT/'ccs',app/'ccs',ignore=shutil.ignore_patterns('__pycache__','*.pyc'))
+        (app/'tools').mkdir()
+        shutil.copy2(ROOT/'tools/tray.py',app/'tools/tray.py')
+        (app/'assets').mkdir()
+        shutil.copy2(ROOT/'assets/ccs-tray.svg',app/'assets/ccs-tray.svg')
         # Only the public-domain Bible is redistributed; no logo, binaries or models.
         bible=app/'assets/bible';bible.mkdir(parents=True)
         for filename in ('engwebp_vpl.txt','engwebp_about.htm'):
@@ -54,9 +58,28 @@ RestartSec=10
 [Install]
 WantedBy=default.target
 ''')
+        write(stage/'usr/lib/systemd/user/ccs-video-cleanup-packaged-tray.service',f'''[Unit]
+Description=Christ Church Video Cleanup desktop tray
+After=graphical-session.target ccs-video-cleanup-packaged.service
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+Environment=CCS_SERVER_SERVICE=ccs-video-cleanup-packaged.service
+Environment=CCS_TRAY_OPEN=/usr/bin/ccs-video-cleanup
+ExecStart=/usr/bin/python3 {INSTALL}/tools/tray.py
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=40
+
+[Install]
+WantedBy=default.target
+''')
         docs=stage/'usr/share/doc/ccs-video-cleanup';docs.mkdir(parents=True)
         for filename in ('README.md','THIRD_PARTY.md'):
             shutil.copy2(ROOT/'packaging'/filename,docs/filename)
+        shutil.copy2(ROOT/'output/pdf/CCS-Video-Cleanup-Linux-Guide.pdf',docs/'CCS-Video-Cleanup-Linux-Guide.pdf')
         write(docs/'copyright','''Christ Church Video Cleanup application source and installer.
 Third-party executables, Python libraries, AI models and church logo are not
 included in this package. Dependencies are installed independently by APT or
@@ -90,6 +113,6 @@ Description: Local Christ Church Southampton sermon video preparation
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--version',default='1.3.0')
+    parser.add_argument('--version',default='1.4.0')
     parser.add_argument('--output',type=Path,default=ROOT/'dist')
     args=parser.parse_args();build(args.version,args.output.resolve())

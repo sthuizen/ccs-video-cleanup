@@ -20,7 +20,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 APP = Path(__file__).resolve().parent.parent
 INSTALL = APP.parent
 DATA = Path(os.environ.get('CCS_DATA_DIR', str(Path(os.environ['LOCALAPPDATA'])/'CCSVideoCleanup')))
-VERSION = '1.3.0'
+VERSION = '1.4.0'
 PORT = int(os.environ.get('CCS_PORT', '8765'))
 URL = f'http://127.0.0.1:{PORT}'
 LIB = DATA/'python-packages'
@@ -178,6 +178,12 @@ def health():
 
 def server():
     with file_lock(DATA/'server.lock'):
+        from windows.process_group import ProcessGroup
+        group=ProcessGroup()
+        tray_log=(DATA/'tray.log').open('a',encoding='utf-8')
+        subprocess.Popen(['powershell.exe','-NoProfile','-STA','-WindowStyle','Hidden','-ExecutionPolicy','Bypass',
+                          '-File',str(APP/'windows/tray.ps1'),'-Url',URL,'-Instance',IDENTITY,
+                          '-Icon',str(APP/'windows/church.ico'),'-DataDir',str(DATA)],stdout=tray_log,stderr=tray_log,**HIDDEN)
         if not ready():
             state={'stage':'Starting setup','error':False,'ready':False}
             class Handler(BaseHTTPRequestHandler):

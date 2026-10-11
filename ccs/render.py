@@ -5,6 +5,7 @@ from PIL import Image, ImageDraw, ImageFont
 from .common import ROOT, BIN, LOGO, command, probe, status, write_json, read_json, exclusive, process_options
 from .acquire import video_path
 from .audio import FILTER as CLEAN, profile as audio_profile, prepare as prepare_audio
+from .audio_review import selected_profile
 INTRO_SECONDS=5
 
 def validate(plan):
@@ -70,15 +71,21 @@ def mono_filter(job, video, start, duration):
     return chosen
 
 @exclusive
+def output_dimensions(width, height, target=None):
+    from .acquire import resolution
+    target=resolution(target)
+    factor=min(1,target/height) if target else 1
+    return max(2,int(width*factor)//2*2),max(2,int(height*factor)//2*2)
+
 def prepare_sermon(job, plan, stabilize=True):
     if not 0<=float(plan['start'])<float(plan['end'])<=float(plan['duration']):
         raise ValueError('Invalid cut points')
     video=video_path(job); start=float(plan['start']); duration=float(plan['end'])-start
     streams=probe(video)['streams']; v=next(s for s in streams if s['codec_type']=='video')
-    width=v['width']//2*2; height=v['height']//2*2
+    width,height=output_dimensions(v['width'],v['height'],plan.get('video_height'))
     rate=v.get('avg_frame_rate','30/1'); num,den=map(int,rate.split('/')); fps=num/den if den else 30
     fps=round(fps,3)
-    settings={'start':start,'duration':duration,'source':str(video),'source_size':video.stat().st_size,'source_modified':video.stat().st_mtime_ns,'clean_filter':CLEAN,'audio_profile':audio_profile(),'audio_encoder_input':'s32','stabilize':stabilize,'stabilization_version':3,'width':width,'height':height,'fps':fps}
+    settings={'start':start,'duration':duration,'source':str(video),'source_size':video.stat().st_size,'source_modified':video.stat().st_mtime_ns,'clean_filter':CLEAN,'audio_profile':selected_profile(job,plan),'audio_encoder_input':'s32','stabilize':stabilize,'stabilization_version':3,'width':width,'height':height,'fps':fps}
     if (job/'media-settings.json').exists() and (job/'sermon.mp4').exists() and (job/'cleaned-audio.wav').exists() and (job/'audio-settings.json').exists() and read_json(job/'media-settings.json')==settings:
         return settings
     mono=mono_filter(job,video,start,duration)
@@ -109,6 +116,7 @@ def prepare_sermon(job, plan, stabilize=True):
                 subprocess.run([str(BIN/'ffmpeg'),'-y','-threads','6','-ss',str(start),'-t',str(duration),'-i',str(video),'-an','-vf',vf+',vidstabdetect=shakiness=4:accuracy=15:result=transforms.trf','-f','null','-'],cwd=job,stdout=log,stderr=log,check=True, **process_options())
             write_json(job/'measurement-settings.json',measure_settings)
         vf+=',vidstabtransform=input=transforms.trf:smoothing=15:optalgo=gauss:optzoom=0:zoom=3:maxshift=12:maxangle=0.01:crop=black:interpol=bilinear'
+    if (width,height)!=(v['width'],v['height']): vf+=f',scale={width}:{height}'
     status(job,'Rendering','Encoding the sermon with cleaned mono audio',total_seconds=duration,log_file='render.log')
     with (job/'render.log').open('w') as log:
         subprocess.run([str(BIN/'ffmpeg'),'-y','-threads','6','-ss',str(start),'-t',str(duration),'-i',str(video),'-i',str(audio),'-map','0:v:0','-map','1:a:0','-vf',vf,'-af',norm,'-c:v','libx264','-preset','veryfast','-crf','19','-threads','6','-c:a','aac','-b:a','128k','-ar','48000','-ac','1','-movflags','+faststart','sermon.mp4'],cwd=job,stdout=log,stderr=log,check=True, **process_options())
@@ -116,7 +124,7 @@ def prepare_sermon(job, plan, stabilize=True):
     return settings
 
 @exclusive
-def render(job, stabilize=True):
+def render(job, stabilize=True, finish=True):
     plan=read_json(job/'plan.json'); validate(plan)
     if plan.get('issues') and not plan.get('confirmed'):
         raise ValueError('The analysis needs information or cut-point review. Complete the review before rendering.')
@@ -161,6 +169,6 @@ def render(job, stabilize=True):
     if float(audio_measurement['input_tp'])>-.5: raise RuntimeError('The encoded audio exceeds the safe true-peak limit; inspect audio settings.')
     write_json(job/'validation.json',{'audio_channels':a['channels'],'duration':actual,'expected_duration':expected,'full_decode':'passed','stabilized':stabilize,'audio_profile':settings['audio_profile'],'audio_encoder_input':'s32','audio_master_source':'single AAC encode from enhanced PCM with five-second silence','audio_lufs':float(audio_measurement['input_i']),'audio_true_peak_db':float(audio_measurement['input_tp']),'plan':plan})
     from .preview import prepare
-    prepare(job)
-    status(job,'Finished',str(job/'finished.mp4'))
+    prepare(job,finish=False)
+    if finish:status(job,'Finished',str(job/'finished.mp4'))
     return job/'finished.mp4'

@@ -41,6 +41,7 @@ def build(makensis,logo):
     # Explicit application path; neither registry Python settings nor system site-packages are used.
     (runtime/'python313._pth').write_text('python313.zip\n.\n../app\nimport site\n')
     shutil.copy2(fetch(SPEC['pip'],cache),app/'windows'/SPEC['pip']['filename'])
+    shutil.copy2(ROOT/'output/pdf/CCS-Video-Cleanup-Windows-Guide.pdf',app/'windows/CCS-Video-Cleanup-Windows-Guide.pdf')
     for source,name in ((ROOT/'RIGHTS.md','APPLICATION-RIGHTS.md'),(ROOT/'packaging/windows/README.md','WINDOWS-INSTRUCTIONS.md')):
         shutil.copy2(source,app/'windows'/name)
     (app/'windows/QUICK-START.txt').write_text('''Christ Church Video Cleanup - Windows quick start
@@ -50,8 +51,12 @@ def build(makensis,logo):
    Approve the Microsoft C++ prerequisite prompt if it appears.
 3. Paste the completed YouTube service URL and choose Prepare sermon.
 4. Review the date, passage, title and reading/sermon cut points when asked.
-5. Save the details and create the video. Watch the intro, beginning and end.
-6. Download finished.mp4 for the full-quality result.
+5. Choose YouTube video, Spotify podcast audio, or both.
+6. Save details and make audio tests. Listen, choose a preset, or tweak and retest.
+7. Create the selected exports; check and download them in Step 5.
+
+Podcast MP3 uses the same chosen voice cleanup, without the video intro silence.
+Right-click the church tray icon for progress, Open app, or Quit and stop services.
 
 Closing the browser does not stop processing. Reopen the shortcut to reconnect.
 The app never publishes your videos. Speech recognition and OCR run locally.
@@ -66,7 +71,7 @@ Finish processing before updating or uninstalling. Uninstall keeps video data.
 Complete guide: https://github.com/thenailedone/ccs-video-cleanup/blob/main/packaging/windows/README.md
 (Repository access is required.)
 ''',encoding='utf-8')
-    output=ROOT/'dist/ccs-video-cleanup_1.3.0_windows_x64_setup.exe';output.parent.mkdir(exist_ok=True)
+    output=ROOT/'dist/ccs-video-cleanup_1.4.0_windows_x64_setup.exe';output.parent.mkdir(exist_ok=True)
     subprocess.run([str(makensis),'-V2',f'-DPAYLOAD={payload}',f'-DOUTPUT={output}',str(ROOT/'packaging/windows/installer.nsi')],check=True)
     with output.open('rb') as f:digest=hashlib.file_digest(f,'sha256').hexdigest()
     output.with_suffix('.exe.sha256').write_text(digest+'  '+output.name+'\n')

@@ -12,7 +12,7 @@ import venv
 
 APP = Path(__file__).resolve().parent
 DATA = Path(os.environ.get('CCS_DATA_DIR', str(Path(os.environ.get('XDG_DATA_HOME', str(Path.home()/'.local/share')))/'ccs-video-cleanup')))
-REVISION = '1.3.0'
+REVISION = '1.4.0'
 TOP_PACKAGES = ['faster-whisper==1.2.1']
 
 

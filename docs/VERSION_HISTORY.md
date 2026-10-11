@@ -2,7 +2,15 @@
 
 [Home](../README.md) · [Artifact manifest](versions.json)
 
-This archive was established on 6 October 2026. There was no pre-existing Git history in the workspace. It preserves the two available versioned installers and their source snapshots; it does not invent a commit history for earlier unversioned edits.
+This archive was established on 6 October 2026. There was no pre-existing Git history in the workspace. It initially preserved two versioned installers and their source snapshots and now includes subsequent releases; it does not invent a commit history for earlier unversioned edits.
+
+## 1.4.0 - audio review, podcasts and desktop trays
+
+Current Linux/Windows release. Adds three quiet/loud audio comparisons, guided tuning and preset reset; highest-by-default resolution selection; a pinned workflow and progress bar; explicit saved-service selection on launch; confirmed per-service and master Trash/Recycle Bin deletion; Linux and Windows tray status and shutdown; YouTube video and Spotify-compatible MP3 outputs, individually or together. Includes illustrated PDF guides in both installers and release assets. See [release verification](validation/v1.4.0.md).
+
+## 1.3.0 - approved hall audio and detection
+
+Previous Linux/Windows release. Added verified local DeepFilterNet3 cleanup, improved caption/passage/boundary checks and removal of inferred player chapter labels. Its original artifacts and [verification evidence](validation/v1.3.0.md) are preserved unchanged.
 
 ## 1.2.0 — Windows church edition
 
@@ -16,7 +24,7 @@ This archive was established on 6 October 2026. There was no pre-existing Git hi
 
 Windows 1.2.0 adds a platform edition; Ubuntu/Debian users continue using the preserved 1.1.0 installer. Historical release files remain unchanged. See [Windows validation](validation/v1.2.0.md).
 
-## 1.1.0 — recommended application-only package
+## 1.1.0 — earlier application-only package
 
 - Source-only amd64 `.deb`, with the public-domain Bible asset.
 - Standard Python/media dependencies installed through APT.

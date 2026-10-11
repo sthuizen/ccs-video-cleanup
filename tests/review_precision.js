@@ -4,7 +4,7 @@ const script=html.split('<script>')[1].split('</script>')[0];
 const elements=new Map();
 const document={querySelector(selector){if(!elements.has(selector))elements.set(selector,{value:'',dataset:{},innerHTML:'',textContent:''});return elements.get(selector)}};
 let submitted;
-const fetch=async (url,opts)=>({ok:true,json:async()=>{if(opts){submitted=JSON.parse(opts.body);return {id:'fixture'}}return []}});
+const fetch=async (url,opts)=>({ok:true,json:async()=>{if(opts){if(url==='/api/audio-tests')submitted=JSON.parse(opts.body);return {id:'fixture'}}return []}});
 const show=new Function('document','fetch','setInterval',script+'\nreturn show;')(document,fetch,()=>{});
 const plan={start:2300.85,end:4574.12,date:'2026-10-04',passage:'Romans 2:1–16',title:'When will we see justice?',issues:[],confirmed:true,evidence:{},candidates:{}};
 show({id:'fixture',plan,status:{stage:'Finished',detail:''},finished:false,processed:false});

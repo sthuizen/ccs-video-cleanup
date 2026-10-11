@@ -10,4 +10,9 @@ if ! .venv/bin/python -c 'import urllib.request; urllib.request.urlopen("http://
     fi
     sleep 1
 fi
+if systemctl --user cat ccs-video-cleanup-tray.service >/dev/null 2>&1; then
+    systemctl --user start ccs-video-cleanup-tray.service
+else
+    nohup /usr/bin/python3 tools/tray.py > .tools/tray.log 2>&1 < /dev/null &
+fi
 xdg-open http://127.0.0.1:8765

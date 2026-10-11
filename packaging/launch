@@ -21,6 +21,7 @@ export HF_HUB_OFFLINE=1
 if [ "${1:-}" = --open ]; then
     if systemctl --user cat ccs-video-cleanup-packaged.service >/dev/null 2>&1; then
         systemctl --user enable --now ccs-video-cleanup-packaged.service
+        systemctl --user enable --now ccs-video-cleanup-packaged-tray.service
     elif ! "$CCS_DATA_DIR/venv/bin/python" -c 'import urllib.request; urllib.request.urlopen("http://127.0.0.1:8765/api/jobs", timeout=2)' >/dev/null 2>&1; then
         nohup "$app/launch" serve > "$CCS_DATA_DIR/server.log" 2>&1 < /dev/null &
     fi

@@ -22,7 +22,7 @@ class Media(unittest.TestCase):
             write_json(j/'source-path.json',{'path':str(j/'source.mkv')})
             self.assertIn('c0=c',mono_filter(j,j/'source.mkv',0,8))
             self.assertLess(read_json(j/'audio-channel-analysis.json')['correlation'],-.99)
-            write_json(j/'plan.json',dict(start=1,end=7,duration=8,title='God judges fairly',passage='Romans 2:1–16',date='2026-10-04',issues=[],confirmed=True,sections=[{'name':'Bible reading','start':1,'end':3},{'name':'Sermon','start':3,'end':7}]))
+            write_json(j/'plan.json',dict(video_height=240,start=1,end=7,duration=8,title='God judges fairly',passage='Romans 2:1–16',date='2026-10-04',issues=[],confirmed=True,sections=[{'name':'Bible reading','start':1,'end':3},{'name':'Sermon','start':3,'end':7}]))
             render(j)
             self.assertEqual(read_json(j/'validation.json')['audio_channels'],1)
             self.assertTrue((j/'finished.mp4').is_file())
@@ -42,6 +42,9 @@ class Media(unittest.TestCase):
             lag=lags[near][np.argmax(correlations[near])]
             self.assertLess(abs(lag)/48000,.008,'Master must not accumulate a second AAC join delay')
             from ccs.common import probe
+            streams=probe(j/'finished.mp4')['streams']
+            video=next(s for s in streams if s['codec_type']=='video')
+            self.assertEqual((video['width'],video['height']),(426,240))
             chapters=probe(j/'finished.mp4')['chapters']
             self.assertEqual(chapters, [], 'Scrubbing must not display inferred section labels')
             from ccs.preview import ready
@@ -49,7 +52,7 @@ class Media(unittest.TestCase):
             preview=probe(j/'preview.mp4')
             self.assertEqual(preview.get('chapters', []), [])
             pv=next(s for s in preview['streams'] if s['codec_type']=='video')
-            self.assertEqual((pv['width'],pv['height']),(640,360))
+            self.assertEqual((pv['width'],pv['height']),(426,240))
             self.assertEqual(pv['profile'],'Constrained Baseline')
             import json, subprocess
             def audio_packets(path):

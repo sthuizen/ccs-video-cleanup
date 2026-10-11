@@ -1,0 +1,15 @@
+const script=(await Deno.readTextFile('ccs/index.html')).split('<script>')[1].split('</script>')[0];
+const elements=new Map();
+const document={querySelector(s){if(!elements.has(s))elements.set(s,{value:'',dataset:{},innerHTML:''});return elements.get(s)}};
+let requests=[];
+const fetch=async(path,options)=>{if(path==='/api/jobs')return {json:async()=>[]};if(path==='/api/selection')return {ok:true,json:async()=>({})};requests.push(JSON.parse(options.body));return {ok:true,json:async()=>({resolutions:[1080,720,480]})}};
+const api=new Function('document','localStorage','fetch','setInterval',script+';return {checkResolutions};')(document,{getItem:()=>null,setItem(){}},fetch,()=>{});
+document.querySelector('#url').value='https://youtu.be/lOgWImh7HJU';
+await api.checkResolutions();
+if(document.querySelector('#resolution').value!=='1080'||document.querySelector('#prepare').disabled)throw Error('Highest resolution is not selected by default');
+document.querySelector('#resolution').value='480';
+await document.querySelector('#prepare').onclick();
+if(requests.at(-1).video_height!==480)throw Error('Selected lower resolution not submitted');
+document.querySelector('#url').value='https://youtu.be/c4qtGGSgBQI';document.querySelector('#url').oninput();
+if(!document.querySelector('#prepare').disabled||!document.querySelector('#resolution').disabled)throw Error('Changed URL can use stale resolutions');
+console.log('Resolution defaults, lower selection, and changed-URL invalidation passed.');

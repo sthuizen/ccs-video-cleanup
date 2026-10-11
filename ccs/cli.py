@@ -7,9 +7,9 @@ from .analyze import analyze
 from .render import render
 
 @exclusive
-def process(source,cookies=None,analyze_only=False):
+def process(source,cookies=None,analyze_only=False,video_height=None):
     job,source=job_for(source)
-    video=acquire(job,source,cookies)
+    video=acquire(job,source,cookies,video_height)
     transcript=transcribe(job,video)
     initial=analyze(job,video,transcript,[])
     checked=refine_transcript(job,video,transcript,initial)
@@ -19,6 +19,9 @@ def process(source,cookies=None,analyze_only=False):
     needs_screen=any('title' in issue.lower() or 'passage' in issue.lower() for issue in initial['issues'])
     screens=scan(job,video) if needs_screen else []
     plan=analyze(job,video,transcript,screens)
+    if video_height is not None:
+        plan['video_height']=video_height
+        write_json(job/'plan.json',plan)
     if plan['issues'] and not plan.get('confirmed'):
         status(job,'Needs information','; '.join(plan['issues']))
     elif not analyze_only: render(job)

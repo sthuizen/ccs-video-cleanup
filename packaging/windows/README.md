@@ -57,6 +57,14 @@ If NSIS is extracted locally, set `NSISDIR` to its `usr/share/nsis` folder and p
 
 To update dependencies, compile `requirements.in` for Windows x64/Python 3.13 with hash generation, retain RapidOCR's separate lock and test on actual Windows. Bump all installer/launcher version fields together. Record first-run setup, real OCR, offline speech-model inference, local enhancement, synthetic opposed-stereo render, absence of player chapters, preview audio, paths with spaces/non-ASCII, duplicate launch, update/uninstall behavior and retained data. Linux tests alone do not prove Windows compatibility.
 
-## Version 1.3.0
+## Version 1.4.0
 
-This release uses the same approved speech-cleanup settings as the Linux installation: DeepFilterNet3 v0.5.6 with a 20 dB suppression cap, gentle filtering and constant gain targeting -20 LUFS. Setup obtains the official Windows executable directly from upstream and verifies its pinned SHA256 (`75e11fa16445f560cb6b021521ddb89e89270d13b83089705d98776f58fd7915`), retaining MIT/Apache notices. Processing runs locally. Caption refinement and passage/boundary improvements are included; variable services still need operator review. Finished videos and previews omit inferred player chapter labels. Existing downloaded videos retain their original metadata until regenerated or replaced. Install 1.3.0 over the previous version while processing is idle; setup preserves jobs/models and prepares the new enhancer.
+This release uses the same approved speech-cleanup settings as the Linux installation: DeepFilterNet3 v0.5.6 with a 20 dB suppression cap, gentle filtering and constant gain targeting -20 LUFS. Setup obtains the official Windows executable directly from upstream and verifies its pinned SHA256 (`75e11fa16445f560cb6b021521ddb89e89270d13b83089705d98776f58fd7915`), retaining MIT/Apache notices. Processing runs locally. Caption refinement and passage/boundary improvements are included; variable services still need operator review. Finished videos and previews omit inferred player chapter labels. Existing downloaded videos retain their original metadata until regenerated or replaced. Install 1.4.0 over the previous version while processing is idle; setup preserves jobs/models and prepares the new enhancer.
+
+## Tray and podcast export
+
+Version 1.4.0 includes a native Windows notification icon implemented with built-in PowerShell/WinForms. It remains when the browser closes. Right-click for current task, percentage when measurable, elapsed time, ETA, Open app and Quit and stop services. Check the taskbar hidden-icons arrow if it is not visible. Fresh launch shows Ready until a service is chosen. Active desktop processing asks for confirmation before quitting; the Windows process group closes download/media workers when the server exits. Setup and active CLI work must finish before closing.
+
+Choose YouTube video, Spotify podcast audio or both; listen to the preset tests and optionally tweak before exporting. Podcast audio uses the same conditioned PCM and chosen volume/peak protection, encoded once to 48 kHz/128 kbps mono MP3 without the video intro silence. Downloads are manual; no automatic publication occurs.
+
+The Start menu includes **User guide (PDF)**. [Windows illustrated PDF](../../output/pdf/CCS-Video-Cleanup-Windows-Guide.pdf).

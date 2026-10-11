@@ -48,3 +48,13 @@ An unknown-publisher/SmartScreen prompt is possible because the church installer
 Updates and uninstall refuse to interrupt active processing. Finish the job first. Browser closing does not stop the server; reopening the shortcut reconnects. Uninstall retains `%LOCALAPPDATA%\CCSVideoCleanup`, including jobs and models. See the [Windows guide](../packaging/windows/README.md) for command-line maintenance.
 
 On a new Windows installation, the default browser may show its own welcome screens before the app page. Complete that browser setup; the church application does not require browser sync or a Microsoft account.
+
+## 1.4 audio, exports and tray
+
+- Choose a prepared service before opening its clip/audio steps. Fresh launch intentionally starts without a selection.
+- Audio tests show activity in the pinned bar. After changing a slider, recreate and listen to the test before export. Reset restores the chosen preset.
+- Select at least one destination. MP3 downloads appear after podcast validation; full-quality MP4 is separate from the light preview.
+- Windows: check the notification area's hidden-icons overflow for the church icon. Closing the browser keeps the server running; use the tray to quit.
+- Linux: the tray needs GTK/Ayatana AppIndicator and a desktop tray host. Check `systemctl --user status ccs-video-cleanup-packaged-tray.service` for the packaged app. Desktop environments without a tray host still have browser progress.
+- If a cached file has a lower resolution, choose a higher resolution and prepare again to download that source. The app does not invent detail by upscaling.
+- Delete controls are under **Manage saved services**, closed by default. Review, acknowledgment and a typed phrase are all required. Deleted jobs go to Trash/Recycle Bin.

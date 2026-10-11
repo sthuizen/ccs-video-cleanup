@@ -1,6 +1,6 @@
 # Ubuntu / Debian installer
 
-Version 1.3 is an application-only amd64 package targeting Ubuntu 24.04 LTS and Debian
+Version 1.4 is an application-only amd64 package targeting Ubuntu 24.04 LTS and Debian
 13. Older releases do not provide all required Python/PyAV versions. Other
 releases need compatible binary wheels and separate validation. APT
 installs standard dependencies; the user's first-run setup downloads specialist
@@ -13,7 +13,7 @@ run locally without cloud AI, API keys or subscriptions.
 Ubuntu needs the `universe` repository enabled. From the installer folder:
 
 ```bash
-sudo apt install ./ccs-video-cleanup_1.3.0_amd64.deb
+sudo apt install ./ccs-video-cleanup_1.4.0_amd64.deb
 ccs-video-cleanup setup
 ```
 
@@ -75,15 +75,15 @@ If upgrading the bundled 1.0 prototype, finish processing and stop its packaged
 service before installing 1.1. User jobs stay in the same data directory:
 
 ```bash
-systemctl --user stop ccs-video-cleanup-packaged.service
-sudo apt install ./ccs-video-cleanup_1.3.0_amd64.deb
+systemctl --user stop ccs-video-cleanup-packaged-tray.service ccs-video-cleanup-packaged.service
+sudo apt install ./ccs-video-cleanup_1.4.0_amd64.deb
 ccs-video-cleanup setup
 ```
 
 ## Remove
 
 ```bash
-systemctl --user disable --now ccs-video-cleanup-packaged.service
+systemctl --user disable --now ccs-video-cleanup-packaged-tray.service ccs-video-cleanup-packaged.service
 sudo apt remove ccs-video-cleanup
 ```
 
@@ -94,7 +94,7 @@ only when you no longer need its contents.
 ## Rebuild
 
 ```bash
-python3 packaging/build_deb.py --version 1.3.0
+python3 packaging/build_deb.py --version 1.4.0
 ```
 
 Requires `dpkg-deb`; no local venv, binary toolchain or model cache is needed.
@@ -103,6 +103,12 @@ or touching the running app. Before releasing changes, run the repository's
 unit tests and verify the package/setup in the target distributions, including
 an actual synthetic video render and offline model loading.
 
-## Version 1.3.0 audio and review
+## Version 1.4.0 audio and review
 
 The native DeepFilterNet3 enhancer is downloaded directly from upstream, verified and installed in the user data directory. The approved settings match the original Linux installation: 20 dB maximum suppression, gentle filtering and constant gain targeting -20 LUFS. First setup requires internet; enhancement then runs locally. Improved caption checks, passage/boundary evidence and manual review are included. Player chapter labels are disabled. Install the new package and rerun `ccs-video-cleanup setup` as your desktop user, with processing idle; jobs and model caches are retained.
+
+## Desktop tray and guide
+
+The .deb includes the Linux tray script, orange icon, GTK/Ayatana dependencies and a separate user-service unit. Desktop launch starts both services. Closing the browser leaves work running. Tray quit stops the server and its workers; active work asks for confirmation. The packaged tray requires user systemd and a compatible desktop indicator host; some GNOME desktops need their usual AppIndicator extension enabled. Non-systemd fallback starts the web server without a managed tray.
+
+The installed PDF is `/usr/share/doc/ccs-video-cleanup/CCS-Video-Cleanup-Linux-Guide.pdf`. [Read it online](../output/pdf/CCS-Video-Cleanup-Linux-Guide.pdf). Guided audio tests, resolution choice, confirmed deletion and YouTube/Spotify exports are included. Finish work and quit the tray before upgrading.

@@ -1,0 +1,150 @@
+{
+  "version": "1.4.0",
+  "date": "2026-10-11",
+  "artifacts": [
+    {
+      "version": "1.4.0",
+      "platform": "Ubuntu/Debian amd64",
+      "filename": "ccs-video-cleanup_1.4.0_amd64.deb",
+      "bytes": 1550700,
+      "sha256": "c52e5feeb9d2e5b84100a8f82a879d1e559a3ed236e5c6eea3805090d7ad920f",
+      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.0",
+      "status": "current"
+    },
+    {
+      "version": "1.4.0",
+      "platform": "Windows 10/11 x64",
+      "filename": "ccs-video-cleanup_1.4.0_windows_x64_setup.exe",
+      "bytes": 12923649,
+      "sha256": "704565cc4235325943500d2719aaebb2eadd6928ccc738159aeca81683d44adc",
+      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.0",
+      "status": "current; installer unsigned"
+    },
+    {
+      "version": "1.4.0",
+      "platform": "Linux illustrated guide",
+      "filename": "CCS-Video-Cleanup-Linux-Guide.pdf",
+      "bytes": 524392,
+      "sha256": "7e204556152f4aa1727c60f0d1f5fca3b7e645f970370623d19b5f2a2f341bf6",
+      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.0",
+      "status": "current"
+    },
+    {
+      "version": "1.4.0",
+      "platform": "Windows illustrated guide",
+      "filename": "CCS-Video-Cleanup-Windows-Guide.pdf",
+      "bytes": 487060,
+      "sha256": "ed06318d4a0517be3688a7e81bdfe977e96bbf17dc1e601076de545a41056ce3",
+      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.0",
+      "status": "current"
+    }
+  ],
+  "source_linux": {
+    "python_tests": 71,
+    "passed": 71,
+    "deno_harnesses": 9
+  },
+  "linux_packages": {
+    "Ubuntu 24.04": {
+      "python_tests": 71,
+      "passed": 71,
+      "normal_user_setup": true,
+      "offline_whisper_load": true,
+      "real_ocr_initialization": true,
+      "synthetic_media_exports": true,
+      "graphical_login_tested": false
+    },
+    "Debian 13": {
+      "python_tests": 71,
+      "passed": 71,
+      "normal_user_setup": true,
+      "offline_whisper_load": true,
+      "real_ocr_initialization": true,
+      "synthetic_media_exports": true,
+      "graphical_login_tested": false
+    }
+  },
+  "windows": {
+    "Windows 11": {
+      "verification": {
+        "version": "1.4.0",
+        "windows": [
+          10,
+          0,
+          26100,
+          2,
+          ""
+        ],
+        "python": "3.13.16 (tags/v3.13.16:cbc944f, Sep 30 2026, 19:17:50) [MSC v.1944 64 bit (AMD64)]",
+        "real_ocr": "CHRIST CHURCH SOUTHAMPTON God judges fairly Romans 2:1-16 4 October2026",
+        "offline_speech_inference": " Welcome to Christ Church Southampton.  Today we are reading from Romans chapter 2, verses 1 to 16.  God judges fairly.  Let us pray together.",
+        "church_logo_sha256": "466145c74bcfc3966dc27dac9c7cf1b2b49ac9e0633fa8e18e481a10e907acb8",
+        "synthetic_render_opposed_stereo": true,
+        "non_ascii_paths": true,
+        "player_chapters_disabled": true,
+        "speech_enhancer": "DeepFilterNet3, 20 dB cap, constant gain -20 LUFS",
+        "web_ui_logo_jobs_api": true,
+        "repeat_setup_reused": true,
+        "duplicate_launch": true,
+        "active_render_shutdown_refused": true
+      },
+      "python_tests": 71,
+      "passed": 70,
+      "skipped_symlink_privilege": 1,
+      "deno_harnesses": 9,
+      "installer_update_uninstall_reinstall": true,
+      "installed_pdf_shortcut": true,
+      "native_tray": true,
+      "recycle_bin_recovery": true,
+      "job_object_child_cleanup": true,
+      "browser_closed_server_and_tray_survive": true,
+      "synthetic_task_percentage_eta_feedback": true
+    },
+    "Windows 10": {
+      "verification": {
+        "version": "1.4.0",
+        "windows": [
+          10,
+          0,
+          19045,
+          2,
+          ""
+        ],
+        "python": "3.13.16 (tags/v3.13.16:cbc944f, Sep 30 2026, 19:17:50) [MSC v.1944 64 bit (AMD64)]",
+        "real_ocr": "CHRIST CHURCH SOUTHAMPTON God judges fairly Romans 2:1-16 4 October2026",
+        "offline_speech_inference": " Welcome to Christ Church Southampton.  Today we are reading from Romans chapter 2, verses 1 to 16.  God judges fairly.  Let us pray together.",
+        "church_logo_sha256": "466145c74bcfc3966dc27dac9c7cf1b2b49ac9e0633fa8e18e481a10e907acb8",
+        "synthetic_render_opposed_stereo": true,
+        "non_ascii_paths": true,
+        "player_chapters_disabled": true,
+        "speech_enhancer": "DeepFilterNet3, 20 dB cap, constant gain -20 LUFS",
+        "web_ui_logo_jobs_api": true,
+        "repeat_setup_reused": true,
+        "duplicate_launch": true,
+        "active_render_shutdown_refused": true
+      },
+      "python_tests": 71,
+      "passed": 70,
+      "skipped_symlink_privilege": 1,
+      "deno_harnesses": 9,
+      "installer_update_uninstall_reinstall": true,
+      "installed_pdf_shortcut": true,
+      "native_tray": true,
+      "recycle_bin_recovery": true,
+      "job_object_child_cleanup": true,
+      "browser_closed_server_and_tray_survive": true,
+      "synthetic_task_percentage_eta_feedback": true
+    }
+  },
+  "guides": {
+    "pages_each": 7,
+    "all_pages_rendered_and_inspected": true,
+    "synthetic_screenshots": true
+  },
+  "limits": [
+    "Windows installer unsigned",
+    "No authenticated live YouTube download or platform upload tested",
+    "Linux userspaces share host kernel; init-only postinstall helpers bypassed in PRoot; graphical package login/autostart not tested",
+    "Existing Windows dependency/model caches reused"
+  ]
+}

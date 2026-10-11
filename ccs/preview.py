@@ -10,7 +10,7 @@ def ready(job):
     return source.exists() and (job/'preview.mp4').exists() and settings.exists() and read_json(settings)==signature(job)
 
 @exclusive
-def prepare(job):
+def prepare(job,finish=True):
     if ready(job): return job/'preview.mp4'
     source=job/'finished.mp4'; info=probe(source)
     duration=float(info['format']['duration'])
@@ -33,5 +33,5 @@ def prepare(job):
     temporary.replace(job/'preview.mp4');write_json(job/'preview-settings.json',settings)
     write_json(job/'preview-validation.json',{'duration':float(check['format']['duration']),'width':v['width'],'height':v['height'],
                'profile':v.get('profile'),'audio':'copied without re-encoding','audio_channels':a['channels']})
-    status(job,'Finished',str(source))
+    if finish:status(job,'Finished',str(source))
     return job/'preview.mp4'
