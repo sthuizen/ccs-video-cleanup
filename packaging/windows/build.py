@@ -70,7 +70,7 @@ Start menu: Video files and evidence opens your data; Setup log helps with setup
 Data: %LOCALAPPDATA%\\CCSVideoCleanup
 Finish processing before updating or uninstalling. Uninstall keeps video data.
 
-Complete guide: https://github.com/thenailedone/ccs-video-cleanup/blob/main/packaging/windows/README.md
+Complete guide: https://github.com/sthuizen/ccs-video-cleanup/blob/main/packaging/windows/README.md
 (Repository access is required.)
 ''',encoding='utf-8')
     output=ROOT/'dist/ccs-video-cleanup_1.4.1_windows_x64_setup.exe';output.parent.mkdir(exist_ok=True)

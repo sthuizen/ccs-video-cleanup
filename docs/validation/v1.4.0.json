@@ -8,7 +8,7 @@
       "filename": "ccs-video-cleanup_1.4.0_amd64.deb",
       "bytes": 1550700,
       "sha256": "c52e5feeb9d2e5b84100a8f82a879d1e559a3ed236e5c6eea3805090d7ad920f",
-      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.0",
+      "release": "https://github.com/sthuizen/ccs-video-cleanup/releases/tag/v1.4.0",
       "status": "current"
     },
     {
@@ -17,7 +17,7 @@
       "filename": "ccs-video-cleanup_1.4.0_windows_x64_setup.exe",
       "bytes": 12923649,
       "sha256": "704565cc4235325943500d2719aaebb2eadd6928ccc738159aeca81683d44adc",
-      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.0",
+      "release": "https://github.com/sthuizen/ccs-video-cleanup/releases/tag/v1.4.0",
       "status": "current; installer unsigned"
     },
     {
@@ -26,7 +26,7 @@
       "filename": "CCS-Video-Cleanup-Linux-Guide.pdf",
       "bytes": 524392,
       "sha256": "7e204556152f4aa1727c60f0d1f5fca3b7e645f970370623d19b5f2a2f341bf6",
-      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.0",
+      "release": "https://github.com/sthuizen/ccs-video-cleanup/releases/tag/v1.4.0",
       "status": "current"
     },
     {
@@ -35,7 +35,7 @@
       "filename": "CCS-Video-Cleanup-Windows-Guide.pdf",
       "bytes": 487060,
       "sha256": "ed06318d4a0517be3688a7e81bdfe977e96bbf17dc1e601076de545a41056ce3",
-      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.0",
+      "release": "https://github.com/sthuizen/ccs-video-cleanup/releases/tag/v1.4.0",
       "status": "current"
     }
   ],

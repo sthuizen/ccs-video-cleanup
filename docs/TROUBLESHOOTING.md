@@ -37,7 +37,7 @@ Look at the named stage log in that folder. Correct the reported cause, then ret
 
 ## Reporting a problem
 
-Use the repository's [issues](https://github.com/thenailedone/ccs-video-cleanup/issues). Include package version, distro/Python version, action, error and the smallest relevant log excerpt. Explain whether it is the package or original installation. Remove credentials, signed download URLs and sensitive transcript material. Do not attach cookies, full private recordings, home directories or model/venv archives. A short synthetic reproduction is preferable when the problem is about rendering or UI logic.
+Use the repository's [issues](https://github.com/sthuizen/ccs-video-cleanup/issues). Include package version, distro/Python version, action, error and the smallest relevant log excerpt. Explain whether it is the package or original installation. Remove credentials, signed download URLs and sensitive transcript material. Do not attach cookies, full private recordings, home directories or model/venv archives. A short synthetic reproduction is preferable when the problem is about rendering or UI logic.
 
 ## Windows first setup and launch
 

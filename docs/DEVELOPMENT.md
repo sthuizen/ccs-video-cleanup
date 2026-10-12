@@ -7,7 +7,7 @@
 Sign into GitHub with access to the private repository, then:
 
 ```bash
-git clone https://github.com/thenailedone/ccs-video-cleanup.git
+git clone https://github.com/sthuizen/ccs-video-cleanup.git
 cd ccs-video-cleanup
 git switch -c your-change
 ```
