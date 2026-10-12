@@ -20,7 +20,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 APP = Path(__file__).resolve().parent.parent
 INSTALL = APP.parent
 DATA = Path(os.environ.get('CCS_DATA_DIR', str(Path(os.environ['LOCALAPPDATA'])/'CCSVideoCleanup')))
-VERSION = '1.4.0'
+VERSION = '1.4.1'
 PORT = int(os.environ.get('CCS_PORT', '8765'))
 URL = f'http://127.0.0.1:{PORT}'
 LIB = DATA/'python-packages'
@@ -298,7 +298,8 @@ def main():
                 if health():break
                 time.sleep(.2)
             else:raise RuntimeError('The app could not start. Check '+str(DATA/'server.log')+'. Port 8765 may already be in use.')
-        webbrowser.open(URL)
+        if '--background' not in sys.argv:
+            webbrowser.open(URL)
 
 if __name__=='__main__':
     try:main()

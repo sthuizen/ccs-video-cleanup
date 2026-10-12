@@ -13,7 +13,7 @@ run locally without cloud AI, API keys or subscriptions.
 Ubuntu needs the `universe` repository enabled. From the installer folder:
 
 ```bash
-sudo apt install ./ccs-video-cleanup_1.4.0_amd64.deb
+sudo apt install ./ccs-video-cleanup_1.4.1_amd64.deb
 ccs-video-cleanup setup
 ```
 
@@ -26,8 +26,10 @@ setup fails with the pip error instead of silently compiling dependencies.
 
 Open **Christ Church Video Cleanup** from the applications menu. A terminal
 shows initial setup progress if setup has not been completed, then the browser
-opens. The first successful desktop launch enables the packaged user service
-at login. Without user systemd, the launcher starts a background server.
+opens. Desktop launch starts services for the current session. Login startup
+is off by default; select **Start automatically at login** in the tray menu
+to enable it, or clear the checkmark to disable it. Changing this preference
+leaves current processing running. Without user systemd, the launcher starts a background server.
 Closing the browser does not stop video processing.
 
 The logo is not distributed. Intros use the church name as text by default.
@@ -76,7 +78,7 @@ service before installing 1.1. User jobs stay in the same data directory:
 
 ```bash
 systemctl --user stop ccs-video-cleanup-packaged-tray.service ccs-video-cleanup-packaged.service
-sudo apt install ./ccs-video-cleanup_1.4.0_amd64.deb
+sudo apt install ./ccs-video-cleanup_1.4.1_amd64.deb
 ccs-video-cleanup setup
 ```
 
@@ -94,7 +96,7 @@ only when you no longer need its contents.
 ## Rebuild
 
 ```bash
-python3 packaging/build_deb.py --version 1.4.0
+python3 packaging/build_deb.py --version 1.4.1
 ```
 
 Requires `dpkg-deb`; no local venv, binary toolchain or model cache is needed.
@@ -103,7 +105,16 @@ or touching the running app. Before releasing changes, run the repository's
 unit tests and verify the package/setup in the target distributions, including
 an actual synthetic video render and offline model loading.
 
-## Version 1.4.0 audio and review
+## Version 1.4.1 startup controls
+
+Launch and setup no longer enable login startup. The tray checkbox controls both
+the server and tray user units. On the first tray launch after upgrading from
+1.4.0, the old implicit startup enablement is cleared without stopping current
+work. Open the updated app once after installation to apply that migration;
+then select **Start automatically at login** if wanted. The saved preference
+is retained across subsequent launches and upgrades. See [validation](../docs/validation/v1.4.1.md).
+
+## Version 1.4 audio and review
 
 The native DeepFilterNet3 enhancer is downloaded directly from upstream, verified and installed in the user data directory. The approved settings match the original Linux installation: 20 dB maximum suppression, gentle filtering and constant gain targeting -20 LUFS. First setup requires internet; enhancement then runs locally. Improved caption checks, passage/boundary evidence and manual review are included. Player chapter labels are disabled. Install the new package and rerun `ccs-video-cleanup setup` as your desktop user, with processing idle; jobs and model caches are retained.
 

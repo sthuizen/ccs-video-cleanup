@@ -11,6 +11,23 @@ $title=$menu.Items.Add('');$title.Enabled=$false
 $detail=$menu.Items.Add('');$detail.Enabled=$false
 $timing=$menu.Items.Add('');$timing.Enabled=$false
 [void]$menu.Items.Add((New-Object System.Windows.Forms.ToolStripSeparator))
+$startupPython=Join-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) 'runtime\python.exe'
+$startupScript=Join-Path $PSScriptRoot 'startup.py'
+$startup=$menu.Items.Add('Start automatically at login')
+$startup.Checked=((& $startupPython $startupScript status) -eq 'enabled')
+$startup.Add_Click({
+    $startup.Enabled=$false
+    try {
+        $action=if($startup.Checked){'disable'}else{'enable'}
+        $result=& $startupPython $startupScript $action 2>&1
+        if($LASTEXITCODE -ne 0){throw ($result -join "`n")}
+    } catch {
+        [System.Windows.Forms.MessageBox]::Show($_.Exception.Message,'Could not change login startup','OK','Error')|Out-Null
+    } finally {
+        $startup.Checked=((& $startupPython $startupScript status) -eq 'enabled')
+        $startup.Enabled=$true
+    }
+})
 $open=$menu.Items.Add('Open Christ Church Video Cleanup')
 $quit=$menu.Items.Add('Quit and stop services')
 $open.Add_Click({Start-Process $Url})
@@ -41,7 +58,7 @@ $timer.Add_Tick({
         $title.Visible=[bool]$feedback.title;$detail.Visible=[bool]$feedback.detail;$timing.Visible=[bool]$feedback.timing
         $tip='Christ Church: '+$feedback.task
         if($tip.Length -gt 63){$tip=$tip.Substring(0,63)};$tray.Text=$tip
-        @{pid=$PID;visible=$tray.Visible;task=$task.Text;title=$title.Text;detail=$detail.Text;timing=$timing.Text}|ConvertTo-Json|Set-Content -Encoding UTF8 (Join-Path $DataDir 'tray-state.json')
+        @{pid=$PID;visible=$tray.Visible;task=$task.Text;title=$title.Text;detail=$detail.Text;timing=$timing.Text;startup_enabled=$startup.Checked}|ConvertTo-Json|Set-Content -Encoding UTF8 (Join-Path $DataDir 'tray-state.json')
     } catch {
         $task.Text='Starting or reconnecting...';$tray.Text='Christ Church Video Cleanup - Starting'
     }

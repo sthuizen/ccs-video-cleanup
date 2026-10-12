@@ -57,6 +57,8 @@ def build(makensis,logo):
 
 Podcast MP3 uses the same chosen voice cleanup, without the video intro silence.
 Right-click the church tray icon for progress, Open app, or Quit and stop services.
+Login startup is off by default. Select Start automatically at login to enable it;
+clear the checkmark to disable it without stopping current work.
 
 Closing the browser does not stop processing. Reopen the shortcut to reconnect.
 The app never publishes your videos. Speech recognition and OCR run locally.
@@ -71,7 +73,7 @@ Finish processing before updating or uninstalling. Uninstall keeps video data.
 Complete guide: https://github.com/thenailedone/ccs-video-cleanup/blob/main/packaging/windows/README.md
 (Repository access is required.)
 ''',encoding='utf-8')
-    output=ROOT/'dist/ccs-video-cleanup_1.4.0_windows_x64_setup.exe';output.parent.mkdir(exist_ok=True)
+    output=ROOT/'dist/ccs-video-cleanup_1.4.1_windows_x64_setup.exe';output.parent.mkdir(exist_ok=True)
     subprocess.run([str(makensis),'-V2',f'-DPAYLOAD={payload}',f'-DOUTPUT={output}',str(ROOT/'packaging/windows/installer.nsi')],check=True)
     with output.open('rb') as f:digest=hashlib.file_digest(f,'sha256').hexdigest()
     output.with_suffix('.exe.sha256').write_text(digest+'  '+output.name+'\n')

@@ -44,6 +44,8 @@ The pinned step bar shows completed and pending steps, current task and measured
 
 Both desktop packages include a system tray icon. Closing the browser keeps processing running. Open the tray menu to inspect progress, reopen the app or choose **Quit and stop services**. Quitting active desktop work asks first. Windows may keep the icon in the hidden-icons overflow. Linux needs a desktop tray host and user systemd for the packaged tray.
 
+Version 1.4.1 adds an optional **Start automatically at login** checkbox to the Linux and Windows tray menus, off by default. Clear the checkmark to disable it without stopping current work. Opening the app starts services for that session and preserves your login preference. On Linux, open the updated app once after upgrading to reset 1.4.0's implicit startup enablement. Windows login startup starts the tray and server without opening a browser. The [1.4.1 validation record](docs/validation/v1.4.1.md) lists completed checks and pending native Windows validation; its installers and updated guides are uploaded as a draft release. The recommended tested release remains 1.4.0.
+
 There is no publishing or upload step. See the [operator guide](docs/USER_GUIDE.md) for review examples, file locations and CLI commands.
 
 ## What runs locally?

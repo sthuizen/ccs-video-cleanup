@@ -10,7 +10,7 @@ Use a 64-bit Intel/AMD Windows PC. ARM and 32-bit Windows are not supported by t
 
 Windows downloads start without browser cookies by default, so Firefox is optional. If YouTube requests verification, install/open Firefox, sign into YouTube there and enter `firefox` under **Download access**. Firefox is preferable to Chromium browser-cookie extraction on current Windows.
 
-After setup, paste the completed YouTube service URL, choose **Prepare sermon**, review uncertain fields and create the finished video. The church logo appears in the app and intro card. See [the operator guide](../../docs/USER_GUIDE.md). Closing the browser leaves processing running. Reopening the shortcut reconnects to the existing server. The app starts when opened; it does not install a Windows system service or run automatically at login.
+After setup, paste the completed YouTube service URL, choose **Prepare sermon**, review uncertain fields and create the finished video. The church logo appears in the app and intro card. See [the operator guide](../../docs/USER_GUIDE.md). Closing the browser leaves processing running. Reopening the shortcut reconnects to the existing server. The app starts when opened. Login startup is off by default: select **Start automatically at login** in the tray menu to enable it, or clear its checkmark to disable it without interrupting work. Login startup opens the tray and server without opening a browser. It uses the current user's Windows Run registry entry; no Windows system service is installed. Updates preserve this choice; uninstall removes the startup entry.
 
 The Windows app is local at `http://127.0.0.1:8765`. It does not publish videos. The browser preview and full-quality download remain distinct. Source, recognition evidence, manual details and finished media are retained locally.
 
@@ -57,7 +57,11 @@ If NSIS is extracted locally, set `NSISDIR` to its `usr/share/nsis` folder and p
 
 To update dependencies, compile `requirements.in` for Windows x64/Python 3.13 with hash generation, retain RapidOCR's separate lock and test on actual Windows. Bump all installer/launcher version fields together. Record first-run setup, real OCR, offline speech-model inference, local enhancement, synthetic opposed-stereo render, absence of player chapters, preview audio, paths with spaces/non-ASCII, duplicate launch, update/uninstall behavior and retained data. Linux tests alone do not prove Windows compatibility.
 
-## Version 1.4.0
+## Version 1.4.1 startup controls
+
+Adds the optional **Start automatically at login** tray setting, initially off. The installer, launcher and bundled guide use version 1.4.1. Native Windows 10/11 validation for this patch is pending; see [the validation record](../../docs/validation/v1.4.1.md). The 1.4.0 installers and their earlier Windows validation remain preserved.
+
+## Version 1.4.0 audio features
 
 This release uses the same approved speech-cleanup settings as the Linux installation: DeepFilterNet3 v0.5.6 with a 20 dB suppression cap, gentle filtering and constant gain targeting -20 LUFS. Setup obtains the official Windows executable directly from upstream and verifies its pinned SHA256 (`75e11fa16445f560cb6b021521ddb89e89270d13b83089705d98776f58fd7915`), retaining MIT/Apache notices. Processing runs locally. Caption refinement and passage/boundary improvements are included; variable services still need operator review. Finished videos and previews omit inferred player chapter labels. Existing downloaded videos retain their original metadata until regenerated or replaced. Install 1.4.0 over the previous version while processing is idle; setup preserves jobs/models and prepares the new enhancer.
 

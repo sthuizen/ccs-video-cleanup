@@ -20,10 +20,10 @@ SetCompressor /SOLID lzma
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_LANGUAGE "English"
-VIProductVersion "1.4.0.0"
+VIProductVersion "1.4.1.0"
 VIAddVersionKey "ProductName" "Christ Church Video Cleanup"
 VIAddVersionKey "FileDescription" "Church sermon video preparation installer"
-VIAddVersionKey "FileVersion" "1.4.0"
+VIAddVersionKey "FileVersion" "1.4.1"
 VIAddVersionKey "LegalCopyright" "Private church-use application; see included rights and dependency notices"
 
 Function LaunchApplication
@@ -55,6 +55,11 @@ copy_files:
   SetOutPath "$INSTDIR"
   File /r "${PAYLOAD}/*"
   WriteUninstaller "$INSTDIR\Uninstall.exe"
+  ; Preserve an explicit login opt-in, refreshing paths after an installation move.
+  ReadRegStr $0 HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "CCSVideoCleanup"
+  ${If} $0 != ""
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "CCSVideoCleanup" '$\"$INSTDIR\runtime\pythonw.exe$\" $\"$INSTDIR\app\windows\launcher.py$\" --background'
+  ${EndIf}
   CreateDirectory "$SMPROGRAMS\Christ Church Video Cleanup"
   CreateShortCut "$SMPROGRAMS\Christ Church Video Cleanup\Christ Church Video Cleanup.lnk" "$INSTDIR\runtime\pythonw.exe" '"$INSTDIR\app\windows\launcher.py" --open' "$INSTDIR\app\windows\church.ico"
   CreateShortCut "$DESKTOP\Christ Church Video Cleanup.lnk" "$INSTDIR\runtime\pythonw.exe" '"$INSTDIR\app\windows\launcher.py" --open' "$INSTDIR\app\windows\church.ico"
@@ -64,7 +69,7 @@ copy_files:
   CreateShortCut "$SMPROGRAMS\Christ Church Video Cleanup\User guide (PDF).lnk" "$INSTDIR\app\windows\CCS-Video-Cleanup-Windows-Guide.pdf"
   CreateShortCut "$SMPROGRAMS\Christ Church Video Cleanup\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CCSVideoCleanup" "DisplayName" "Christ Church Video Cleanup"
-  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CCSVideoCleanup" "DisplayVersion" "1.4.0"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CCSVideoCleanup" "DisplayVersion" "1.4.1"
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CCSVideoCleanup" "UninstallString" '"$INSTDIR\Uninstall.exe"'
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CCSVideoCleanup" "DisplayIcon" "$INSTDIR\app\windows\church.ico"
   WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CCSVideoCleanup" "NoModify" 1
@@ -81,6 +86,7 @@ Section "Uninstall"
   Delete "$DESKTOP\Christ Church Video Cleanup.lnk"
   RMDir /r "$SMPROGRAMS\Christ Church Video Cleanup"
   DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\CCSVideoCleanup"
+  DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "CCSVideoCleanup"
   RMDir /r "$INSTDIR\app"
   RMDir /r "$INSTDIR\runtime"
   Delete "$INSTDIR\Uninstall.exe"

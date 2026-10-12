@@ -79,6 +79,43 @@
       "sha256": "ed06318d4a0517be3688a7e81bdfe977e96bbf17dc1e601076de545a41056ce3",
       "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.0",
       "status": "current"
+    },
+    {
+      "version": "1.4.1",
+      "platform": "Ubuntu/Debian amd64",
+      "filename": "ccs-video-cleanup_1.4.1_amd64.deb",
+      "bytes": 1551752,
+      "sha256": "bdcea2836047bb51fe56be2814003042975b4d691ef9ff5a4f089118b7631a41",
+      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.1",
+      "status": "draft candidate; native Windows validation pending"
+    },
+    {
+      "version": "1.4.1",
+      "platform": "Windows 10/11 x64",
+      "filename": "ccs-video-cleanup_1.4.1_windows_x64_setup.exe",
+      "bytes": 12925040,
+      "sha256": "1ccd37c196836bdc55d409b84c970ad42d235808e377d55dfb0c625f9b46a836",
+      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.1",
+      "status": "draft candidate; native Windows validation pending"
+    },
+    {
+      "version": "1.4.1",
+      "platform": "Linux illustrated guide",
+      "filename": "CCS-Video-Cleanup-Linux-Guide.pdf",
+      "bytes": 524534,
+      "sha256": "f71391ea076b924a7518dda79bd9a3a1f7f8c442bce5896cd52b3a5f1084525d",
+      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.1",
+      "status": "draft candidate; native Windows validation pending"
+    },
+    {
+      "version": "1.4.1",
+      "platform": "Windows illustrated guide",
+      "filename": "CCS-Video-Cleanup-Windows-Guide.pdf",
+      "bytes": 487214,
+      "sha256": "8af5501ee128a195626024ef680ea64e8b7a40bec76ee5e017557bf2b73d81ee",
+      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.1",
+      "status": "draft candidate; native Windows validation pending"
     }
-  ]
+  ],
+  "updated_date": "2026-10-12"
 }

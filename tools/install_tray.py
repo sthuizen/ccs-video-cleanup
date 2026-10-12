@@ -25,6 +25,7 @@ TimeoutStopSec=40
 WantedBy=default.target
 ''')
     subprocess.run(['systemctl','--user','daemon-reload'],check=True)
-    subprocess.run(['systemctl','--user','enable','--now','ccs-video-cleanup-tray.service'],check=True)
+    # Installation starts the tray now without opting the user into login startup.
+    subprocess.run(['systemctl','--user','start','ccs-video-cleanup-tray.service'],check=True)
 
 if __name__=='__main__':install()

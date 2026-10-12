@@ -55,5 +55,5 @@ units=Path.home()/'.config/systemd/user'; units.mkdir(parents=True,exist_ok=True
 (units/'ccs-video-cleanup.service').write_text('[Unit]\nDescription=Christ Church Video Cleanup local interface\n\n[Service]\nType=simple\nWorkingDirectory='+str(ROOT)+'\nExecStart="'+str(ROOT/'ccs-cleanup')+'" serve\nRestart=on-failure\nRestartSec=3\n\n[Install]\nWantedBy=default.target\n')
 if shutil.which('systemctl'):
     subprocess.run(['systemctl','--user','daemon-reload'],check=False)
-    subprocess.run(['systemctl','--user','enable','--now','ccs-video-cleanup.service'],check=False)
+    subprocess.run(['systemctl','--user','start','ccs-video-cleanup.service'],check=False)
 print('Installed. Open Christ Church Video Cleanup from your applications menu.')

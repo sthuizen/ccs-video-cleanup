@@ -4,6 +4,10 @@
 
 This archive was established on 6 October 2026. There was no pre-existing Git history in the workspace. It initially preserved two versioned installers and their source snapshots and now includes subsequent releases; it does not invent a commit history for earlier unversioned edits.
 
+## 1.4.1 - optional login startup (release candidate)
+
+Adds **Start automatically at login** to the Linux and Windows tray dropdowns, off by default. Linux launch/setup stops implicitly enabling units, and the first upgraded tray launch resets legacy enablement. Windows uses an opt-in per-user registry entry with browser-free background launch; updates preserve it and uninstall removes it. Includes updated installers and illustrated guides. [Validation and remaining Windows checks](validation/v1.4.1.md) accompany the draft release. Version 1.4.0 remains the recommended tested release until native Windows validation is complete.
+
 ## 1.4.0 - audio review, podcasts and desktop trays
 
 Current Linux/Windows release. Adds three quiet/loud audio comparisons, guided tuning and preset reset; highest-by-default resolution selection; a pinned workflow and progress bar; explicit saved-service selection on launch; confirmed per-service and master Trash/Recycle Bin deletion; Linux and Windows tray status and shutdown; YouTube video and Spotify-compatible MP3 outputs, individually or together. Includes illustrated PDF guides in both installers and release assets. See [release verification](validation/v1.4.0.md).

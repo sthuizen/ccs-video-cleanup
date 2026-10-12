@@ -69,6 +69,8 @@ Deletion moves the whole job folder (source download, analysis, samples and gene
 
 ## Linux and Windows background tray
 
+Login startup is off by default. In the tray dropdown, check **Start automatically at login** to enable it; clear the checkmark to disable it. This affects future logins and leaves current work running. Opening the desktop app preserves your choice. Windows starts the tray and server without opening the browser. On Linux, open the updated app once after upgrading from 1.4.0 to clear the old automatic enablement, then select the checkbox if wanted.
+
 Both desktop packages have a tray controller independent of the browser. Linux uses an Ayatana indicator; Windows uses the native notification area (possibly its hidden-icons overflow). Closing browser windows leaves processing running. Its menu offers **Open Christ Church Video Cleanup**, current task, percentage (when measurable), elapsed time, estimated remaining time and **Quit and stop services**. Quit stops the local server and its download/FFmpeg worker processes, then removes the tray icon. Quitting during processing asks first; source files and saved analysis remain, but incomplete output may need to be recreated. The desktop shortcut starts the server and tray again.
 
 The tray uses the system Python GTK bindings, the installed Ayatana indicator library and the desktop tray host. To install its user-service unit for another Linux source checkout, run `.venv/bin/python tools/install_tray.py`. The .deb includes the tray controller and dependencies; the packaged tray requires user systemd and a compatible desktop tray host. Windows uses the built-in PowerShell/WinForms notification icon and a process group to stop server children on exit.

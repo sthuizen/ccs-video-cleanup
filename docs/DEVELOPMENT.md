@@ -12,7 +12,7 @@ cd ccs-video-cleanup
 git switch -c your-change
 ```
 
-`main` is current source/documentation. `v1.0.0` is a recovered historical snapshot; `v1.4.0` identifies the current release source. See [version provenance](VERSION_HISTORY.md). Release binaries are separate attachments and are not included by cloning. Bible text and provenance are tracked; the logo, toolchains and model caches are not.
+`main` is current source/documentation. `v1.0.0` is a recovered historical snapshot; `v1.4.0` identifies the current recommended release and `v1.4.1` the startup-control candidate. See [version provenance](VERSION_HISTORY.md). Release binaries are separate attachments and are not included by cloning. Bible text and provenance are tracked; the logo, toolchains and model caches are not.
 
 ## Run a development copy
 
@@ -61,7 +61,7 @@ In a source-local installation use `.tools/bin/deno`; in a packaged one use the 
 On a Debian-family build machine with Python 3 and `dpkg-deb`:
 
 ```bash
-python3 packaging/build_deb.py --version 1.4.0
+python3 packaging/build_deb.py --version 1.4.1
 ```
 
 Use a new version for new content. The builder writes a `.deb` and SHA-256 checksum into ignored `dist/`; it does not install the package, need model caches or alter a running server. Version 1.1's design excludes third-party binaries/wheels/models and branding. Keep that boundary intact. The preserved original 1.1.0 artifact is authoritative; rebuilds are not promised to be bit-identical because packaging timestamps/documentation can differ.
@@ -90,4 +90,4 @@ Run source regression tests on Linux, then use actual Windows for native import,
 
 No Windows VM or evaluation OS is distributed. Source tags, installer/checksum assets and sanitized test reports belong together in the private release. Do not claim Authenticode signing unless a real trusted certificate was used.
 
-Version 1.4.0 builders include the platform PDF guides, so first run `tools/build_user_guides.py` after updating the screenshot fixtures. New UI checks also cover `audio_workflow`, `service_selection`, `resolution_selection`, `library_controls` and `export_choices`. Windows tray feedback uses `/api/tray`; the server starts its native WinForms tray in a kill-on-close Windows job object. Linux packaged tray is a separate GTK user unit. See the 1.4.0 validation record for actual tested scope.
+Version 1.4.1 builders include the platform PDF guides, so first run `tools/build_user_guides.py` after updating the screenshot fixtures. New UI checks also cover `audio_workflow`, `service_selection`, `resolution_selection`, `library_controls` and `export_choices`. Windows tray feedback uses `/api/tray`; the server starts its native WinForms tray in a kill-on-close Windows job object. Linux packaged tray is a separate GTK user unit. See the 1.4.1 validation record for actual tested scope.

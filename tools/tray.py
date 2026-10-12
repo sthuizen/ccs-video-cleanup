@@ -18,9 +18,11 @@ if os.environ.get('CCS_SERVER_SERVICE')=='ccs-video-cleanup-packaged.service':
 from ccs.common import DATA_ROOT, file_lock, LockBusy
 
 SERVICE=os.environ.get('CCS_SERVER_SERVICE','ccs-video-cleanup.service')
+STARTUP_PREFERENCE=DATA_ROOT/'.tools/login-startup.json'
 URL='http://127.0.0.1:8765'
 
 from ccs.tray_feedback import progress_feedback
+from ccs import startup
 
 def stop_server(force=False):
     """Idle stops take the media lock; systemd stops all server children."""
@@ -58,6 +60,15 @@ class Controller:
         for key in ('title','detail','timing'):
             item=Gtk.MenuItem(label='');item.set_sensitive(False);self.menu.append(item);self.feedback[key]=item
         self.menu.append(Gtk.SeparatorMenuItem())
+        self.startup_item=Gtk.CheckMenuItem(label='Start automatically at login')
+        try:
+            startup.initialize(SERVICE,STARTUP_PREFERENCE)
+            self.startup_item.set_active(startup.enabled(SERVICE))
+        except (OSError,subprocess.SubprocessError):
+            self.startup_item.set_sensitive(False)
+            self.startup_item.set_tooltip_text('Login startup requires installed systemd user services.')
+        self.startup_item.connect('toggled',self.toggle_startup)
+        self.menu.append(self.startup_item)
         for title,handler in [('Open Christ Church Video Cleanup',self.open_app),('Quit and stop services',self.quit)]:
             item=Gtk.MenuItem(label=title);item.connect('activate',handler);self.menu.append(item)
         self.menu.show_all()
@@ -97,6 +108,24 @@ class Controller:
     def open_app(self,*args):
         command=os.environ.get('CCS_TRAY_OPEN')
         subprocess.Popen([command,'--open'] if command else [str(ROOT/'open-cleanup')],cwd=ROOT)
+
+    def toggle_startup(self,item):
+        item.set_sensitive(False)
+        value=item.get_active()
+        def work():
+            error=None
+            try:startup.set_enabled(SERVICE,value,STARTUP_PREFERENCE)
+            except Exception as exc:error=str(exc)
+            actual=startup.enabled(SERVICE)
+            def update():
+                item.handler_block_by_func(self.toggle_startup)
+                item.set_active(actual)
+                item.handler_unblock_by_func(self.toggle_startup)
+                item.set_sensitive(True)
+                if error:self.message('Could not change login startup',error)
+                return False
+            self.GLib.idle_add(update)
+        threading.Thread(target=work,daemon=True).start()
 
     def message(self,title,text,question=False):
         Gtk=self.Gtk

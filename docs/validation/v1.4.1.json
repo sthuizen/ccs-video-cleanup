@@ -1,0 +1,86 @@
+{
+  "version": "1.4.1",
+  "date": "2026-10-12",
+  "release_status": "draft",
+  "artifacts": [
+    {
+      "version": "1.4.1",
+      "platform": "Ubuntu/Debian amd64",
+      "filename": "ccs-video-cleanup_1.4.1_amd64.deb",
+      "bytes": 1551752,
+      "sha256": "bdcea2836047bb51fe56be2814003042975b4d691ef9ff5a4f089118b7631a41",
+      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.1",
+      "status": "draft candidate; native Windows validation pending"
+    },
+    {
+      "version": "1.4.1",
+      "platform": "Windows 10/11 x64",
+      "filename": "ccs-video-cleanup_1.4.1_windows_x64_setup.exe",
+      "bytes": 12925040,
+      "sha256": "1ccd37c196836bdc55d409b84c970ad42d235808e377d55dfb0c625f9b46a836",
+      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.1",
+      "status": "draft candidate; native Windows validation pending"
+    },
+    {
+      "version": "1.4.1",
+      "platform": "Linux illustrated guide",
+      "filename": "CCS-Video-Cleanup-Linux-Guide.pdf",
+      "bytes": 524534,
+      "sha256": "f71391ea076b924a7518dda79bd9a3a1f7f8c442bce5896cd52b3a5f1084525d",
+      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.1",
+      "status": "draft candidate; native Windows validation pending"
+    },
+    {
+      "version": "1.4.1",
+      "platform": "Windows illustrated guide",
+      "filename": "CCS-Video-Cleanup-Windows-Guide.pdf",
+      "bytes": 487214,
+      "sha256": "8af5501ee128a195626024ef680ea64e8b7a40bec76ee5e017557bf2b73d81ee",
+      "release": "https://github.com/thenailedone/ccs-video-cleanup/releases/tag/v1.4.1",
+      "status": "draft candidate; native Windows validation pending"
+    }
+  ],
+  "source_tests": {
+    "python_tests": 79,
+    "result": "passed",
+    "browser_harnesses": 9
+  },
+  "linux_installed_tests": {
+    "ubuntu": "24.04 / Python 3.12",
+    "debian": "13 / Python 3.13",
+    "python_tests_each": 79,
+    "cached_offline_whisper": true,
+    "real_ocr_initialization": true,
+    "synthetic_media": true,
+    "environment": "PRoot userspaces sharing the host kernel"
+  },
+  "linux_desktop": {
+    "gtk_callback": "passed: opt-in and failed-change recovery",
+    "legacy_startup_reset": "passed",
+    "server_pid_preserved": 4428,
+    "startup_units": "disabled",
+    "tray_pid_preserved": 6228
+  },
+  "windows": {
+    "nsis_build": "passed",
+    "registry_tests": "mock registry on Linux",
+    "powershell_syntax": "passed with PowerShell 7.6.6 on Linux",
+    "native_windows_tested": false,
+    "installer_signed": false
+  },
+  "guides": {
+    "pages_each": 7,
+    "rendered_and_visually_inspected": true,
+    "screenshots": "existing 1.4.0 synthetic browser and Windows tray captures; new checkbox described in text"
+  },
+  "pending": [
+    "Native Windows 10/11 installation, tray and login-cycle tests",
+    "Windows enabled/disabled upgrade and uninstall with startup entry removal",
+    "Linux packaged graphical login-cycle tests"
+  ],
+  "limits": [
+    "Cached dependency/model environments reused; fresh dependency setup not repeated",
+    "No real-service media or authenticated live YouTube download used",
+    "No publish/upload to YouTube or Spotify"
+  ]
+}

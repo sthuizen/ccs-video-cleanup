@@ -51,6 +51,8 @@ On a new Windows installation, the default browser may show its own welcome scre
 
 ## 1.4 audio, exports and tray
 
+- To prevent login startup, clear **Start automatically at login** in the tray dropdown. The services keep running until you quit. On Linux, open the 1.4.1 app once after upgrading to apply the reset of old implicit startup; ordinary launches no longer enable it. On Windows, uninstall removes this app's login entry.
+
 - Choose a prepared service before opening its clip/audio steps. Fresh launch intentionally starts without a selection.
 - Audio tests show activity in the pinned bar. After changing a slider, recreate and listen to the test before export. Reset restores the chosen preset.
 - Select at least one destination. MP3 downloads appear after podcast validation; full-quality MP4 is separate from the light preview.

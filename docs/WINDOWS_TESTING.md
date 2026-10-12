@@ -55,6 +55,8 @@ Record the exact installer hash/byte size, OS builds, test output and limits in 
 
 ## Native tray and 1.4 exports
 
+For 1.4.1, verify that a fresh install has no `CCSVideoCleanup` value under `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`. Check **Start automatically at login** in the tray, log out and back in, and confirm one tray/server starts without a browser window. Clear the checkmark and confirm the registry value is removed while current processing continues; the next login must not start the app. Test enabled and disabled upgrades, paths with spaces/non-ASCII, and idle uninstall removing the startup entry while retaining data. Linux-host registry mocks and PowerShell syntax checks do not replace these native tests. Record new evidence in [the 1.4.1 validation record](validation/v1.4.1.md).
+
 Check notification-area overflow as well as visible icons. Close the browser and confirm the server and one tray remain. Hover/right-click for current task/progress, reopen the app, and choose Quit and stop services. Confirm the server and tray terminate, then relaunch and check Ready with no selected service. Exercise active-work confirmation, the CLI lock refusal, and the Windows job object's kill-on-close child cleanup.
 
 Run every `tests/*.js` check against an isolated source fixture; check the installed HTML's Windows anonymous-download default separately. Standard Windows users may skip the symlink-only test with WinError 1314; path traversal and deletion confirmation tests still run. Exercise native Recycle Bin recovery with a synthetic job. Export a synthetic podcast and both outputs using the same chosen profile; full decode, duration, format and peaks must pass. Verify the installed PDF and Start menu guide shortcut.
